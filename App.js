@@ -1,11 +1,37 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from "react";
+import { StyleSheet} from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import TodoList from "./src/screens/TodoList";
+import HomeScreen from "./src/screens/HomeScreen";
+import AddressBook from "./src/screens/AddressBook";
+import ShoppingList from "./src/screens/ShoppingList";
+
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-      <View style={styles.header}>
-        <Text>Quiz</Text>
-      </View>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+          />
+          <Stack.Screen
+            name="TodoList"
+            component={TodoList}
+          />
+          <Stack.Screen
+            name="ShoppingList"
+            component={ShoppingList}
+          />
+          <Stack.Screen
+            name="AddressBook"
+            component={AddressBook}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
   );
 }
 
