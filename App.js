@@ -8,7 +8,27 @@ export default function App() {
       </View>
   );
 }
+const stateTache = [
+  "ToDo",
+  "Pending",
+  "Done"
+];
+class Tache extends Component {
+  state = { 
+    currentState : 0,
+    nom : this.props.nom,
+    membres : this.props.membres,
+    desc : this.props.desc,
+    
+  };
 
+
+  render() {
+    return (
+      <Text>Hello, I am your cat!</Text>
+    );
+  }
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
