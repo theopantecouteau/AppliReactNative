@@ -1,34 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Button,StyleSheet, Text, View } from 'react-native';
+import React, { Component } from "react";
+import  ToDoList  from './src/components/ToDoList'
 
 export default function App() {
   return (
-      <View style={styles.header}>
+      <View>
         <Text>Quiz</Text>
+        <ToDoList/>
       </View>
   );
 }
-const stateTache = [
-  "ToDo",
-  "Pending",
-  "Done"
-];
-class Tache extends Component {
-  state = { 
-    currentState : 0,
-    nom : this.props.nom,
-    membres : this.props.membres,
-    desc : this.props.desc,
-    
-  };
 
-
-  render() {
-    return (
-      <Text>Hello, I am your cat!</Text>
-    );
-  }
-}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
