@@ -6,12 +6,14 @@ import TodoList from "./src/screens/TodoList";
 import HomeScreen from "./src/screens/HomeScreen";
 import AddressBook from "./src/screens/AddressBook";
 import ShoppingList from "./src/screens/ShoppingList";
-
+import { Provider } from "react-redux";
+import store from './src/store/';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
+    <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
@@ -32,6 +34,7 @@ export default function App() {
           />
         </Stack.Navigator>
       </NavigationContainer>
+    </Provider>
   );
 }
 

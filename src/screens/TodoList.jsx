@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import { Button,StyleSheet, Text, View } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
+import {connect} from 'react-redux';
 
-const TodoList = ({navigation})  => {
+const TodoList = ({navigation ,todos})  => {
 
     const [isCreate, setIsCreate] = useState(false);
     const [listToDo, setListToDo] = useState([]);
@@ -70,6 +71,12 @@ const TodoList = ({navigation})  => {
       </View>
   );
 }
+
+const TodoListStore = connect(
+    (state) => ({
+        todos: state.todos
+    })
+)(TodoList)
 
 const styles = StyleSheet.create({
   container: {
