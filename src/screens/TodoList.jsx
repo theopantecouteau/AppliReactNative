@@ -2,12 +2,22 @@ import { StatusBar } from 'expo-status-bar';
 import { Button,StyleSheet, Text, View } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
 import {connect} from 'react-redux';
+import { UPDATE_TODO_ACTION } from '../store/todoReducer';
 
-const TodoList = ({navigation ,todos})  => {
+function toDoItem ({todo, onToggle}){
+    return <Text>
+        <li>
+            <label htmlFor="">
+                <input type="checkbox" checked={todo.completed} onChange={()=> onToggle(todo)} />
+                {todo.title}
+            </label>
+        </li>
+    </Text>
+}
+const TodoList = ({navigation ,todos, onToggle})  => {
 
     const [isCreate, setIsCreate] = useState(false);
-    const [listToDo, setListToDo] = useState([]);
-    
+
     const stateTache = [
         "ToDo",
         "Pending",
@@ -47,14 +57,15 @@ const TodoList = ({navigation ,todos})  => {
             title="Créer une nouvelle Tâche"
              color="#841584"
         />)}
-        {!isCreate && listToDo.length > 0 && (
+        {!isCreate && todos.length > 0 && (
             <Text>
-                {listToDo.map(value => {
-                    return <Text>{value}</Text>
-                })}
+                <ul>
+                    {todos.map(todo => <toDoItem todo={todo} onToggle={onToggle}
+                    key={todo.id}/>)}
+                </ul>
             </Text>
         )}
-        {!isCreate && listToDo.length == 0 && (
+        {!isCreate && todos.length == 0 && (
             <Text>
                 Aucune Tâche de créer.
             </Text>
@@ -62,7 +73,7 @@ const TodoList = ({navigation ,todos})  => {
         {isCreate && (
             <Button
                 onPress={() => {
-                    listToDo.push(<Tache nom="Hugo"/>)
+                    todos.push(<Tache nom="Hugo"/>)
                     setIsCreate(false);
                 }}
                 title="Ajouter la tache"
@@ -72,9 +83,15 @@ const TodoList = ({navigation ,todos})  => {
   );
 }
 
-const TodoListStore = connect(
+export const TodoListStore = connect(
     (state) => ({
         todos: state.todos
+    }),
+    (dispatch) =>({
+        onToggle : todo => dispatch({
+            type : UPDATE_TODO_ACTION,
+            payload : {...todo, completed : !todo.completed}
+        })
     })
 )(TodoList)
 
