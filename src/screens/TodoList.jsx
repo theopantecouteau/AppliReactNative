@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button,StyleSheet, Text, View } from 'react-native';
+import { Button,StyleSheet, Text, View, TextInput } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
 import {connect} from 'react-redux';
 import { UPDATE_TODO_ACTION } from '../store/todoReducer';
@@ -17,7 +17,8 @@ function toDoItem ({todo, onToggle}){
 const TodoList = ({navigation ,todos, onToggle})  => {
 
     const [isCreate, setIsCreate] = useState(false);
-
+    const [listToDo, setListToDo] = useState([]);
+    const [nameTache, setNameTache] = useState("");
     const stateTache = [
         "ToDo",
         "Pending",
@@ -51,36 +52,44 @@ const TodoList = ({navigation ,todos, onToggle})  => {
     }
 
     return (
-      <View style={styles.container}>
-        {!isCreate && (<Button 
-            onPress={createTache}
-            title="Créer une nouvelle Tâche"
-             color="#841584"
-        />)}
-        {!isCreate && todos.length > 0 && (
-            <Text>
-                <ul>
-                    {todos.map(todo => <toDoItem todo={todo} onToggle={onToggle}
-                    key={todo.id}/>)}
-                </ul>
-            </Text>
-        )}
-        {!isCreate && todos.length == 0 && (
-            <Text>
-                Aucune Tâche de créer.
-            </Text>
-        )}
-        {isCreate && (
-            <Button
-                onPress={() => {
-                    todos.push(<Tache nom="Hugo"/>)
-                    setIsCreate(false);
-                }}
-                title="Ajouter la tache"
-            />
-        )}
-      </View>
-  );
+        <View style={styles.container}>
+            {!isCreate && (<Button 
+                onPress={createTache}
+                title="Créer une nouvelle Tâche"
+                color="#841584"
+            />)}
+            {!isCreate && listToDo.length > 0 && (
+                <Text>
+                    {listToDo.map(value => {
+                        return <Text>{value}</Text>
+                    })}
+                </Text>
+            )}
+            {!isCreate && listToDo.length == 0 && (
+                <Text>
+
+                    Aucune Tâche de créer.
+                </Text>
+            )}
+            {isCreate && (
+                <>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setNameTache}
+                        value={nameTache}
+                        placeholder="Nom de la Tâche"
+                    />
+                    <Button
+                        onPress={() => {
+                            listToDo.push(<Tache nom={nameTache} />);
+                            setIsCreate(false);
+                        } }
+                        title="Ajouter la tache" 
+                    />
+                </>
+            )}
+        </View>
+    );
 }
 
 export const TodoListStore = connect(
@@ -106,7 +115,13 @@ const styles = StyleSheet.create({
   },
   header : {
     backgroundColor : 'red'
-  }
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
 });
 
 export default TodoList;

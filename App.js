@@ -7,7 +7,7 @@ import HomeScreen from "./src/screens/HomeScreen";
 import AddressBook from "./src/screens/AddressBook";
 import ShoppingList from "./src/screens/ShoppingList";
 import { Provider } from "react-redux";
-import store from './src/store/index';
+import store from './src/store/';
 
 const Stack = createNativeStackNavigator();
 
