@@ -3,6 +3,7 @@ import { Button,StyleSheet, Text, View, TextInput } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
 import {connect} from 'react-redux';
 import { UPDATE_TODO_ACTION } from '../store/todoReducer';
+import Tache from '../components/Tache.jsx'
 
 function toDoItem ({todo, onToggle}){
     return <Text>
@@ -16,77 +17,65 @@ function toDoItem ({todo, onToggle}){
 }
 const TodoList = ({navigation ,todos, onToggle})  => {
 
-    const [isCreate, setIsCreate] = useState(false);
-    const [listToDo, setListToDo] = useState([]);
-    const [nameTache, setNameTache] = useState("");
-    const stateTache = [
-        "ToDo",
-        "Pending",
-        "Done"
-    ];
-
-    class Tache extends React.Component {
-        state = { 
-            currentState : 0,
-            nom : this.props.nom,
-            membres : this.props.membres,
-            desc : this.props.desc,
-            date : this.props.date,
-            checklist : [],
-            piecejointe : this.props.piecejointe,
-            url : this.props.url,
-        };
-
-        render() {
-            return (
-                <Text>{this.state.nom}</Text>
-            );
-        }
-    }
-
+    const [_cptId, setCptId] = useState(0);
+    const [_isCreate, setIsCreate] = useState(false);
+    const [_listToDo, setListToDo] = useState([]);
+    const [_nameTache, setNameTache] = useState("");
+    const [_onDetail, setOnDetail] = useState(false);
+    const [_detailObject, setDetailObject] = useState(<Tache/>);
+    
     function createTache(){
         setIsCreate(true);
-        return (
-            <Text></Text>
-        );
     }
+
+    function getDetail(id){
+        setOnDetail(true);
+        for (let i =0; i < _listToDo.length; i++){
+            console.log(_listToDo[i].props.props.id);
+            if (_listToDo[i].props.props.id == id) setDetailObject(_listToDo[i]);
+        }
+    }  
 
     return (
         <View style={styles.container}>
-            {!isCreate && (<Button 
+            {!_isCreate && !_onDetail && (<Button 
                 onPress={createTache}
                 title="Créer une nouvelle Tâche"
                 color="#841584"
             />)}
-            {!isCreate && listToDo.length > 0 && (
+            {!_isCreate && !_onDetail && _listToDo.length > 0 && (
                 <Text>
-                    {listToDo.map(value => {
+                    {_listToDo.map(value => {
                         return <Text>{value}</Text>
                     })}
                 </Text>
             )}
-            {!isCreate && listToDo.length == 0 && (
+            {!_isCreate && !_onDetail && _listToDo.length == 0 && (
                 <Text>
-
                     Aucune Tâche de créer.
                 </Text>
             )}
-            {isCreate && (
+            {_isCreate && !_onDetail && (
                 <>
                     <TextInput
                         style={styles.input}
                         onChangeText={setNameTache}
-                        value={nameTache}
+                        value={_nameTache}
                         placeholder="Nom de la Tâche"
                     />
                     <Button
                         onPress={() => {
-                            listToDo.push(<Tache nom={nameTache} />);
+                            _listToDo.push(<Tache props={{nom : _nameTache, id: _cptId, isDetail : false, parentFunction : getDetail}}/>);
+                            setCptId(_cptId+1);
                             setIsCreate(false);
+                            setNameTache("");
                         } }
                         title="Ajouter la tache" 
                     />
                 </>
+            )}
+            {_onDetail && (
+                <_detailObject/>
             )}
         </View>
     );
