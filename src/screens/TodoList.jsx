@@ -22,7 +22,7 @@ const TodoList = ({navigation ,todos, onToggle})  => {
     const [_listToDo, setListToDo] = useState([]);
     const [_nameTache, setNameTache] = useState("");
     const [_onDetail, setOnDetail] = useState(false);
-    const [_detailObject, setDetailObject] = useState({});
+    const [_listDetail, setListDetail] = useState([]);
     
     function createTache(){
         setIsCreate(true);
@@ -31,12 +31,12 @@ const TodoList = ({navigation ,todos, onToggle})  => {
     function getDetail(id){
         setOnDetail(true);
         for (let i =0; i < _listToDo.length; i++){
-            console.log(_listToDo[i].props.props.id);
             if (_listToDo[i].props.props.id == id){
-                setDetailObject({..._listToDo[i]});
+                setListDetail([_listToDo[i]]);
             }
         }
     }  
+
 
     return (
         <View style={styles.container}>
@@ -76,8 +76,13 @@ const TodoList = ({navigation ,todos, onToggle})  => {
                     />
                 </>
             )}
-            {_onDetail && (
-                <_detailObject/>
+            {_onDetail && _listDetail.length > 0 && (
+                <Text>{
+                _listDetail.map(value => {
+                    return value
+                })}
+                </Text>
+                
             )}
         </View>
     );
