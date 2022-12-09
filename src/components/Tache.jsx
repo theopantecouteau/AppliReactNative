@@ -88,10 +88,14 @@ const Tache = ({navigation, props}) => {
                     date : {_date}{"\n"}
                     pj : {_pj}{"\n"}
                     url : {_url}{"\n"}
-                    {_listeMembre != undefined && (<FlatList
-                    data={_listeMembre}
-                    renderItem={({item}) => <Text style={styles.item}>{item}</Text>}
-                    />)}
+                    {_listeMembre != undefined && (
+                        <FlatList
+                            data={_listeMembre}
+                            renderItem={
+                                ({item}) => {
+                                     <Text style={styles.item}>{item}</Text>
+                            }}
+                        />)}
                 </Text> 
                 </>
             )}

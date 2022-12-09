@@ -68,7 +68,7 @@ const TodoList = ({navigation ,todos, onToggle})  => {
                     />
                     <Button
                         onPress={() => {
-                            _listToDo.push(<Tache props={{nom : _nameTache, id: _cptId, isDetail : false, parentFunction : getDetail}}/>);
+                            _listToDo.push(<Tache props={{nom : _nameTache, id: _cptId, isDetail : false, parentFunction : getDetail, listeMembre : ["Hugo", "Theo"]}}/>);
                             setCptId(_cptId+1);
                             setIsCreate(false);
                             setNameTache("");
