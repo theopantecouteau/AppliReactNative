@@ -20,6 +20,14 @@ const HomeScreen = ({navigation}) => {
                 title="Go to AddressBook"
                 onPress={() => navigation.navigate('AddressBook')}
             />
+            <Button
+                title="Go to Login"
+                onPress={() => navigation.navigate('Login')}
+            />
+            <Button
+                title="Go to Register"
+                onPress={() => navigation.navigate('Register')}
+            />
         </View>
     )
 }
