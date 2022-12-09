@@ -32,6 +32,7 @@ const TodoList = ({navigation ,todos, onToggle})  => {
         setOnDetail(true);
         for (let i =0; i < _listToDo.length; i++){
             if (_listToDo[i].props.props.id == id){
+                _listToDo[i].props.props.isDetail = true;
                 setListDetail([_listToDo[i]]);
             }
         }
