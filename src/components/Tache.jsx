@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button,StyleSheet, Text, View, TextInput } from 'react-native';
+import { Button,StyleSheet, Text, View, FlatList } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
 ;
 
@@ -80,7 +80,20 @@ const Tache = ({navigation, props}) => {
                 </Text>
             )}
             {props.isDetail &&  (
-                <Text>AHAHAHAHA</Text>
+                <>
+                <Text>
+                    id : {props.id}{"\n"}
+                    nom : {props.nom}{"\n"}
+                    desc : {_desc}{"\n"}
+                    date : {_date}{"\n"}
+                    pj : {_pj}{"\n"}
+                    url : {_url}{"\n"}
+                    {_listeMembre != undefined && (<FlatList
+                    data={_listeMembre}
+                    renderItem={({item}) => <Text style={styles.item}>{item}</Text>}
+                    />)}
+                </Text> 
+                </>
             )}
         </View>
     );
@@ -105,5 +118,10 @@ const styles = StyleSheet.create({
       borderWidth: 1,
       padding: 10,
     },
+    item: {
+        padding: 10,
+        fontSize: 18,
+        height: 44,
+      },
   });
   
