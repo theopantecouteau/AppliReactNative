@@ -8,6 +8,7 @@ import AddressBook from "./src/screens/AddressBook";
 import ShoppingList from "./src/screens/ShoppingList";
 import Login from "./src/screens/Login";
 import Register from "./src/screens/Register";
+import Dashboard from "./src/screens/Dashboard";
 
 const Stack = createNativeStackNavigator();
 
@@ -35,9 +36,13 @@ export default function App() {
             name="Login"
             component={Login}
           />
-           <Stack.Screen
+          <Stack.Screen
             name="Register"
             component={Register}
+          />
+          <Stack.Screen
+            name="Dashboard"
+            component={Dashboard}
           />
         </Stack.Navigator>
       </NavigationContainer>
