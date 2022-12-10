@@ -19,16 +19,6 @@ function Login({navigation, props}) {
 
     console.debug(isConnected)
 
-    const handleSignUp = () => {
-        createUserWithEmailAndPassword(auth, id, pwd)
-        .then((userCredential) => {
-            console.debug("User created");
-            const user = userCredential.user;
-            console.debug(user);
-        })
-        .catch((error) => console.debug(error));
-    }
-
     const handleSignIn = () => {
         signInWithEmailAndPassword(auth, id, pwd)
         .then((userCredential) => {
@@ -70,11 +60,6 @@ function Login({navigation, props}) {
                     onPress={handleSignIn}
                     title="Login"
                 > 
-                </Button>
-                <Button
-                    onPress={handleSignUp}
-                    title="Register"
-                >  
                 </Button>
                 <Button
                     onPress={handleLogOut}
