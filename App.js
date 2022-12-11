@@ -2,18 +2,18 @@ import * as React from "react";
 import { StyleSheet} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import TodoListStore from "./src/screens/TodoList";
+import TodoList from "./src/screens/TodoList";
 import HomeScreen from "./src/screens/HomeScreen";
 import AddressBook from "./src/screens/AddressBook";
 import ShoppingList from "./src/screens/ShoppingList";
-import { Provider } from "react-redux";
-import store from './src/store/';
+import Login from "./src/screens/Login";
+import Register from "./src/screens/Register";
+import Dashboard from "./src/screens/Dashboard";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
@@ -22,7 +22,7 @@ export default function App() {
           />
           <Stack.Screen
             name="TodoList"
-            component={TodoListStore}
+            component={TodoList}
           />
           <Stack.Screen
             name="ShoppingList"
@@ -32,9 +32,20 @@ export default function App() {
             name="AddressBook"
             component={AddressBook}
           />
+          <Stack.Screen
+            name="Login"
+            component={Login}
+          />
+          <Stack.Screen
+            name="Register"
+            component={Register}
+          />
+          <Stack.Screen
+            name="Dashboard"
+            component={Dashboard}
+          />
         </Stack.Navigator>
       </NavigationContainer>
-    </Provider>
   );
 }
 

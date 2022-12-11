@@ -2,10 +2,10 @@ import { StatusBar } from 'expo-status-bar';
 import { Button,StyleSheet, Text, View, TextInput } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
 import {connect} from 'react-redux';
-import { UPDATE_TODO_ACTION } from '../store/todoReducer';
+import { UPDATE_TODO_ACTION } from '../constants/index';
 import Tache from '../components/Tache.jsx'
 
-function toDoItem ({todo, onToggle}){
+function ToDoItem ({todo, onToggle}){
     return <Text>
         <li>
             <label htmlFor="">

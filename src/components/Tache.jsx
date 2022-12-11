@@ -13,7 +13,6 @@ const Tache = ({navigation, props}) => {
     const [_listeMembre, setListeMembre] = useState();
     const [_desc, setDesc] = useState();
     const [_date, setDate] = useState();
-    const [_checklist, setChecklist] = useState([]);
     const [_pj, setPj] = useState();
     const [_url, setUrl] = useState();
     
@@ -42,20 +41,6 @@ const Tache = ({navigation, props}) => {
             if (props.date != undefined) setDate(props.date);
         }
     },[_date])
-
-    useEffect(() => { 
-        if (_checklist == undefined){
-            let ajoutMembre = props.checklist;
-            if (ajoutMembre != undefined){
-                let array = [];
-                for (let i = 0; i < ajoutMembre.length; i++){
-                    array.push(ajoutMembre[i]);
-                }
-                setChecklist(array);
-            }
-           
-        }
-    },[_checklist])
 
     useEffect(() => { 
         if (_pj == undefined){
