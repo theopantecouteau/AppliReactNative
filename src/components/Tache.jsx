@@ -1,8 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button,StyleSheet, Text, View, FlatList } from 'react-native';
+import { Button ,StyleSheet, Text, View, FlatList } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
-;
-
+import {deleteTodo } from '../actions/toDo';
+import {connect, useDispatch, useSelector} from 'react-redux';
 const stateTache = [
     "ToDo",
     "Pending",
@@ -11,7 +11,7 @@ const stateTache = [
 const Tache = ({navigation, route}) => {
     const [_currentState, setCurrentState] = useState(0);
     const [_listeMembre, setListeMembre] = useState();
-    
+    const dispatch = useDispatch();
     useEffect(() => { 
         if (_listeMembre == undefined){
             let ajoutMembre = route.params.listeMembre;
@@ -26,6 +26,10 @@ const Tache = ({navigation, route}) => {
         }
     },[_listeMembre])
 
+    const deleteThis = () => {
+        dispatch(deleteTodo(route.params.id));
+        navigation.navigate('TodoList');
+    }
     return (
         <View style={styles.container}>
 
@@ -38,6 +42,11 @@ const Tache = ({navigation, route}) => {
                     url : {route.params.url}{"\n"}
                         
                 </Text> 
+                <Button
+                    onPress={() => deleteThis()} 
+                    style={{backgroundColor : 'red' }}
+                    title="Supprimer"
+                />
                 <FlatList
                     data={route.params.listeMembre}
                     renderItem={
@@ -45,6 +54,8 @@ const Tache = ({navigation, route}) => {
                             <Text style={styles.item}>{item.key}</Text>
                     }
                 />
+
+             
        
         </View>
     );
@@ -54,6 +65,7 @@ const styles = StyleSheet.create({
     container: {
       marginTop : 100,
       width: 1000,
+      flex: 1,
     },
     test: {
         color: 'red',

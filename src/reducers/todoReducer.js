@@ -1,4 +1,4 @@
-import { GET_TODO_ACTION, ADD_TODO_ACTION, UPDATE_TODO_ACTION  } from '../constants';
+import { GET_TODO_ACTION, ADD_TODO_ACTION, UPDATE_TODO_ACTION, DELETE_TODO_ACTION } from '../constants';
 import Tache from '../components/Tache';
 const initialState = {
     tache : [
@@ -24,6 +24,12 @@ const todoReducer = (state = initialState, action) => {
                 ...state,
                 tache : [...state.tache, action.payload]
             }
+        case DELETE_TODO_ACTION: 
+            return {  // returning a copy of orignal state
+             ...state, //copying the original state
+             tache: state.tache.filter(taches => taches.id !== action.payload) 
+                                        // returns a new filtered todos array
+           }
         default : 
             return state;
     }

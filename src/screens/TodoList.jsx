@@ -6,7 +6,7 @@ import Tache from '../components/Tache.jsx'
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../../firebase-config';
 import { getAuth } from 'firebase/auth';
-import { addTodo } from '../actions/toDo';
+import { addTodo, deleteTodo } from '../actions/toDo';
 
 const TodoList = ({navigation ,todos, onToggle})  => {
 
