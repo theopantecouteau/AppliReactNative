@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { Button ,StyleSheet, Text, View, FlatList } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
-import {deleteTodo } from '../actions/toDo';
+import {deleteTodo, updateTodo } from '../actions/toDo';
 import {connect, useDispatch, useSelector} from 'react-redux';
 const stateTache = [
     "ToDo",
@@ -30,6 +30,11 @@ const Tache = ({navigation, route}) => {
         dispatch(deleteTodo(route.params.id));
         navigation.navigate('TodoList');
     }
+    const updateThis = (data) => {
+        dispatch(updateTodo(data));
+        navigation.navigate('TodoList');
+    }
+    
     return (
         <View style={styles.container}>
 
