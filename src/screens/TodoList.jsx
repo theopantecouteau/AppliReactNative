@@ -15,7 +15,7 @@ const TodoList = ({navigation ,todos, onToggle})  => {
     const app = initializeApp(firebaseConfig);
     const aut = getAuth(app);
 
-    const [_cptId, setCptId] = useState(Number(state_ToDoList[state_ToDoList.length -1].id));
+    const  cptIdNumber = Number(state_ToDoList[state_ToDoList.length -1].id) +1;
     const [_isCreate, setIsCreate] = useState(false);
     const [_nameTache, setNameTache] = useState("");
     const [_desc, setDesc] = useState("");
@@ -23,7 +23,7 @@ const TodoList = ({navigation ,todos, onToggle})  => {
     const [_url, setUrl] = useState("");
     const [_listToDo, setListToDo] = useState([]);
 
-    console.debug("Valeur du compteur de tache : " + _cptId);
+    console.debug("Valeur du compteur de tache : " + cptIdNumber);
     useEffect(()=> {
         if (_listToDo.length == 0){
             let array = [];
@@ -122,17 +122,14 @@ const TodoList = ({navigation ,todos, onToggle})  => {
                     />
                     <Button
                         onPress={() => {
-                            let number = _cptId + 1;
                             addtoToDoList({
                                 nom : _nameTache, 
-                                id: number, 
+                                id: cptIdNumber, 
                                 listeMembre : ["Hugo", "Theo"],
                                 desc : _desc,
                                 date : _date,
                                 url : _url
                             });
-                            
-                            setCptId(number);
                             setIsCreate(false);
                             setNameTache("");
                             setUrl("");
