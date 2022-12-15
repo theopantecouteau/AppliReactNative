@@ -8,7 +8,7 @@ const stateTache = [
     "Pending",
     "Done"
 ];
-const Tache = ({navigation, props}) => {
+const Tache = ({navigation, route}) => {
     const [_currentState, setCurrentState] = useState(0);
     const [_listeMembre, setListeMembre] = useState();
     const [_desc, setDesc] = useState();
@@ -18,7 +18,7 @@ const Tache = ({navigation, props}) => {
     
     useEffect(() => { 
         if (_listeMembre == undefined){
-            let ajoutMembre = props.listeMembre;
+            let ajoutMembre = route.params.listeMembre;
             if (ajoutMembre != undefined){
                 let array = [];
                 for (let i = 0; i < ajoutMembre.length; i++){
@@ -32,43 +32,34 @@ const Tache = ({navigation, props}) => {
 
     useEffect(() => { 
         if (_desc == undefined){
-            if (props.desc != undefined) setDesc(props.desc);
+            if (route.params.desc != undefined) setDesc(route.params.desc);
         }
     },[_desc])
 
     useEffect(() => { 
         if (_date == undefined){
-            if (props.date != undefined) setDate(props.date);
+            if (route.params.date != undefined) setDate(route.params.date);
         }
     },[_date])
 
     useEffect(() => { 
         if (_pj == undefined){
-            if (props.pj != undefined) setPj(props.pj);
+            if (route.params.pj != undefined) setPj(route.params.pj);
         }
     },[_pj])
 
     useEffect(() => { 
         if (_url == undefined){
-            if (props.url != undefined) setUrl(props.url);
+            if (route.params.url != undefined) setUrl(route.params.url);
         }
     },[_url])
 
     return (
         <View style={styles.container}>
-            {!props.isDetail && (
-                <Text   
-                    onPress={() => {
-                        props.parentFunction(props.id);
-                    }}>
-                        {props.id} : {props.nom}
-                </Text>
-            )}
-            {props.isDetail &&  (
-                <>
+
                 <Text>
-                    id : {props.id}{"\n"}
-                    nom : {props.nom}{"\n"}
+                    id : {route.params.id}{"\n"}
+                    nom : {route.params.nom}{"\n"}
                     desc : {_desc}{"\n"}
                     date : {_date}{"\n"}
                     pj : {_pj}{"\n"}
@@ -82,8 +73,7 @@ const Tache = ({navigation, props}) => {
                             }}
                         />)}
                 </Text> 
-                </>
-            )}
+       
         </View>
     );
 }

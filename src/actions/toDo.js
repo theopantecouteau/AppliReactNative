@@ -1,8 +1,15 @@
-import { ADD_TODO_ACTION, UPDATE_TODO_ACTION  } from '../constants';
+import { GET_TODO_ACTION, ADD_TODO_ACTION, UPDATE_TODO_ACTION  } from '../constants';
 
 export function addTodo(todo) {
     return {
         type: ADD_TODO_ACTION,
+        payload: todo
+    }
+}
+
+export function getTodo(todo) {
+    return {
+        type: GET_TODO_ACTION,
         payload: todo
     }
 }

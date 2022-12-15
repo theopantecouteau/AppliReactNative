@@ -9,6 +9,7 @@ import ShoppingList from "./src/screens/ShoppingList";
 import Login from "./src/screens/Login";
 import Register from "./src/screens/Register";
 import Dashboard from "./src/screens/Dashboard";
+import Tache from "./src/components/Tache";
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +44,10 @@ export default function App() {
           <Stack.Screen
             name="Dashboard"
             component={Dashboard}
+          />
+          <Stack.Screen
+            name="Tache"
+            component={Tache}
           />
         </Stack.Navigator>
       </NavigationContainer>

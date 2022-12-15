@@ -1,64 +1,65 @@
 import { StatusBar } from 'expo-status-bar';
 import { Button,StyleSheet, Text, View, TextInput } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
-import {connect} from 'react-redux';
+import {connect, useDispatch, useSelector} from 'react-redux';
 import { UPDATE_TODO_ACTION } from '../constants/index';
 import Tache from '../components/Tache.jsx'
+import { initializeApp } from 'firebase/app';
+import { firebaseConfig } from '../../firebase-config';
+import { getAuth } from 'firebase/auth';
 
-function ToDoItem ({todo, onToggle}){
-    return <Text>
-        <li>
-            <label htmlFor="">
-                <input type="checkbox" checked={todo.completed} onChange={()=> onToggle(todo)} />
-                {todo.title}
-            </label>
-        </li>
-    </Text>
-}
 const TodoList = ({navigation ,todos, onToggle})  => {
+
+    const dispatch = useDispatch();
+    const _listToDo = useSelector(state => state.tache.tache);
+    const app = initializeApp(firebaseConfig);
+    const aut = getAuth(app);
 
     const [_cptId, setCptId] = useState(0);
     const [_isCreate, setIsCreate] = useState(false);
-    const [_listToDo, setListToDo] = useState([]);
     const [_nameTache, setNameTache] = useState("");
-    const [_onDetail, setOnDetail] = useState(false);
     const [_listDetail, setListDetail] = useState([]);
-    
+
+    console.debug(useSelector(state => state.tache));
     function createTache(){
         setIsCreate(true);
     }
 
-    function getDetail(id){
-        setOnDetail(true);
-        for (let i =0; i < _listToDo.length; i++){
-            if (_listToDo[i].props.props.id == id){
-                _listToDo[i].props.props.isDetail = true;
-                setListDetail([_listToDo[i]]);
-            }
-        }
-    }  
-
 
     return (
         <View style={styles.container}>
-            {!_isCreate && !_onDetail && (<Button 
+            {!_isCreate && (<Button 
                 onPress={createTache}
                 title="Créer une nouvelle Tâche"
                 color="#841584"
             />)}
-            {!_isCreate && !_onDetail && _listToDo.length > 0 && (
+            {!_isCreate && _listToDo.length > 0 && (
                 <Text>
                     {_listToDo.map(value => {
-                        return <Text>{value}</Text>
+                        return (
+                            <View>
+                                <Text
+                                    onPress={() => {
+                                            navigation.navigate('Tache', {
+                                                id : value.props.props.id,
+                                                nom : value.props.props.nom, 
+                                                listeMembre :  value.props.props.listeMembre
+                                            })
+                                    }}
+                                >
+                                    {value.props.props.id} : {value.props.props.nom}
+                                </Text>
+                            </View>
+                        );
                     })}
                 </Text>
             )}
-            {!_isCreate && !_onDetail && _listToDo.length == 0 && (
+            {!_isCreate  && _listToDo.length == 0 && (
                 <Text>
                     Aucune Tâche de créer.
                 </Text>
             )}
-            {_isCreate && !_onDetail && (
+            {_isCreate && (
                 <>
                     <TextInput
                         style={styles.input}
@@ -68,7 +69,11 @@ const TodoList = ({navigation ,todos, onToggle})  => {
                     />
                     <Button
                         onPress={() => {
-                            _listToDo.push(<Tache props={{nom : _nameTache, id: _cptId, isDetail : false, parentFunction : getDetail, listeMembre : ["Hugo", "Theo"]}}/>);
+                            _listToDo.push(<Tache props={{
+                                nom : _nameTache, 
+                                id: _cptId, 
+                                listeMembre : ["Hugo", "Theo"]
+                            }}/>);
                             setCptId(_cptId+1);
                             setIsCreate(false);
                             setNameTache("");
@@ -77,7 +82,7 @@ const TodoList = ({navigation ,todos, onToggle})  => {
                     />
                 </>
             )}
-            {_onDetail && _listDetail.length > 0 && (
+            { _listDetail.length > 0 && (
                 <Text>{
                 _listDetail.map(value => {
                     return value
@@ -88,18 +93,6 @@ const TodoList = ({navigation ,todos, onToggle})  => {
         </View>
     );
 }
-
-export const TodoListStore = connect(
-    (state) => ({
-        todos: state.todos
-    }),
-    (dispatch) =>({
-        onToggle : todo => dispatch({
-            type : UPDATE_TODO_ACTION,
-            payload : {...todo, completed : !todo.completed}
-        })
-    })
-)(TodoList)
 
 const styles = StyleSheet.create({
   container: {
