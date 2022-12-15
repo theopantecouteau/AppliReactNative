@@ -23,9 +23,11 @@ const TodoList = ({navigation ,todos, onToggle})  => {
     const [_url, setUrl] = useState("");
     const [_listToDo, setListToDo] = useState([]);
 
-    console.debug("Valeur du compteur de tache : " + cptIdNumber);
+    
     useEffect(()=> {
-        if (_listToDo.length == 0){
+        
+        console.debug("Taille de la ToDoListe : " + state_ToDoList.length);
+        console.debug(state_ToDoList);
             let array = [];
             for (let idxTache = 0; idxTache < state_ToDoList.length; idxTache++){
                 let tache = state_ToDoList[idxTache];
@@ -44,12 +46,10 @@ const TodoList = ({navigation ,todos, onToggle})  => {
                 }   
             }
             setListToDo(array);
-        }
-    },[])
+        
+    },[state_ToDoList])
     
     const addtoToDoList = (donnee) => {
-        console.debug("LALAALALALALLALALAL");
-        console.debug(donnee);
         dispatch(addTodo(donnee));
     }   
 
