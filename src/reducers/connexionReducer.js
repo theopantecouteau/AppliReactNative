@@ -9,7 +9,6 @@ const connexionReducer = (state = initialState, action) => {
 
         case LOGIN:
             return {
-                ...state,
                 isConnected : action.payload.isConnected
             };
 

@@ -19,6 +19,11 @@ const todoReducer = (state = initialState, action) => {
             return {
                 tache : action.payload.tache
             };
+        case ADD_TODO_ACTION:
+            return {
+                ...state,
+                tache : [...state.tache, action.payload]
+            }
         default : 
             return state;
     }

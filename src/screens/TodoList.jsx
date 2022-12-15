@@ -2,11 +2,11 @@ import { StatusBar } from 'expo-status-bar';
 import { Button,StyleSheet, Text, View, TextInput } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
 import {connect, useDispatch, useSelector} from 'react-redux';
-import { UPDATE_TODO_ACTION } from '../constants/index';
 import Tache from '../components/Tache.jsx'
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../../firebase-config';
 import { getAuth } from 'firebase/auth';
+import { addTodo } from '../actions/toDo';
 
 const TodoList = ({navigation ,todos, onToggle})  => {
 
@@ -15,7 +15,7 @@ const TodoList = ({navigation ,todos, onToggle})  => {
     const app = initializeApp(firebaseConfig);
     const aut = getAuth(app);
 
-    const [_cptId, setCptId] = useState(Number(state_ToDoList[0].id));
+    const [_cptId, setCptId] = useState(Number(state_ToDoList[state_ToDoList.length -1].id));
     const [_isCreate, setIsCreate] = useState(false);
     const [_nameTache, setNameTache] = useState("");
     const [_desc, setDesc] = useState("");
@@ -23,51 +23,54 @@ const TodoList = ({navigation ,todos, onToggle})  => {
     const [_url, setUrl] = useState("");
     const [_listToDo, setListToDo] = useState([]);
 
-    console.debug(useSelector(state => state.tache));
-
+    console.debug("Valeur du compteur de tache : " + _cptId);
     useEffect(()=> {
         if (_listToDo.length == 0){
             let array = [];
             for (let idxTache = 0; idxTache < state_ToDoList.length; idxTache++){
                 let tache = state_ToDoList[idxTache];
-                array.push(
-                    <Tache props={{
-                            nom : tache.nom, 
-                            id: tache.id, 
-                            listeMembre : tache.listeMembre,
-                            desc : tache.desc,
-                            date : tache.date,
-                            url : tache.url
-                        }}
-                    />
-                )
+                if (tache != undefined){
+                    array.push(
+                        <Tache props={{
+                                nom : tache.nom, 
+                                id: tache.id, 
+                                listeMembre : tache.listeMembre,
+                                desc : tache.desc,
+                                date : tache.date,
+                                url : tache.url
+                            }}
+                        />
+                    )
+                }   
             }
             setListToDo(array);
         }
     },[])
     
-    function createTache(){
-        setIsCreate(true);
-    }
-
+    const addtoToDoList = (donnee) => {
+        console.debug("LALAALALALALLALALAL");
+        console.debug(donnee);
+        dispatch(addTodo(donnee));
+    }   
 
     return (
         <View style={styles.container}>
             {!_isCreate && (
     
                     <Button
-                        onPress={createTache}
+                        onPress={()=> setIsCreate(true)}
                         title="Créer une nouvelle Tâche"
                         color="#841584" 
                     />
     
             )}
             {!_isCreate && _listToDo.length > 0 && (
-                <Text>
-                    {_listToDo.map(value => {
+                <View style={styles.tabTache}>
+                    {_listToDo.map((value,idx) => {
                         return (
-                            <View>
                                 <Text
+                                    key={idx}
+                                    style={styles.tache}
                                     onPress={() => {
                                             navigation.navigate('Tache', {
                                                 id : value.props.props.id,
@@ -81,10 +84,10 @@ const TodoList = ({navigation ,todos, onToggle})  => {
                                 >
                                     {value.props.props.id} : {value.props.props.nom}
                                 </Text>
-                            </View>
+                            
                         );
                     })}
-                </Text>
+                </View>
             )}
             {!_isCreate  && _listToDo.length == 0 && (
                 <Text>
@@ -119,15 +122,17 @@ const TodoList = ({navigation ,todos, onToggle})  => {
                     />
                     <Button
                         onPress={() => {
-                            _listToDo.push(<Tache props={{
+                            let number = _cptId + 1;
+                            addtoToDoList({
                                 nom : _nameTache, 
-                                id: _cptId+1, 
+                                id: number, 
                                 listeMembre : ["Hugo", "Theo"],
                                 desc : _desc,
                                 date : _date,
                                 url : _url
-                            }}/>);
-                            setCptId(_cptId+1);
+                            });
+                            
+                            setCptId(number);
                             setIsCreate(false);
                             setNameTache("");
                             setUrl("");
@@ -160,6 +165,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
   },
+  tabTache : {
+    display : "block",
+    margin : 10
+  },
+  tache : {
+    marginBottom : 20,
+  }
 });
 
 export default TodoList;
