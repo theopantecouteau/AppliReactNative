@@ -11,10 +11,6 @@ const stateTache = [
 const Tache = ({navigation, route}) => {
     const [_currentState, setCurrentState] = useState(0);
     const [_listeMembre, setListeMembre] = useState();
-    const [_desc, setDesc] = useState();
-    const [_date, setDate] = useState();
-    const [_pj, setPj] = useState();
-    const [_url, setUrl] = useState();
     
     useEffect(() => { 
         if (_listeMembre == undefined){
@@ -30,49 +26,25 @@ const Tache = ({navigation, route}) => {
         }
     },[_listeMembre])
 
-    useEffect(() => { 
-        if (_desc == undefined){
-            if (route.params.desc != undefined) setDesc(route.params.desc);
-        }
-    },[_desc])
-
-    useEffect(() => { 
-        if (_date == undefined){
-            if (route.params.date != undefined) setDate(route.params.date);
-        }
-    },[_date])
-
-    useEffect(() => { 
-        if (_pj == undefined){
-            if (route.params.pj != undefined) setPj(route.params.pj);
-        }
-    },[_pj])
-
-    useEffect(() => { 
-        if (_url == undefined){
-            if (route.params.url != undefined) setUrl(route.params.url);
-        }
-    },[_url])
-
     return (
         <View style={styles.container}>
 
                 <Text>
                     id : {route.params.id}{"\n"}
                     nom : {route.params.nom}{"\n"}
-                    desc : {_desc}{"\n"}
-                    date : {_date}{"\n"}
-                    pj : {_pj}{"\n"}
-                    url : {_url}{"\n"}
-                    {_listeMembre != undefined && (
-                        <FlatList
-                            data={_listeMembre}
-                            renderItem={
-                                ({item}) => {
-                                     <Text style={styles.item}>{item}</Text>
-                            }}
-                        />)}
+                    desc : {route.params.desc}{"\n"}
+                    date : {route.params.date}{"\n"}
+                    pj : {route.params.pj}{"\n"}
+                    url : {route.params.url}{"\n"}
+                        
                 </Text> 
+                <FlatList
+                    data={route.params.listeMembre}
+                    renderItem={
+                        ({item}) => 
+                            <Text style={styles.item}>{item.key}</Text>
+                    }
+                />
        
         </View>
     );
