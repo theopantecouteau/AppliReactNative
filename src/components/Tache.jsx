@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button ,StyleSheet, Text, View, FlatList } from 'react-native';
+import { Button ,StyleSheet, Text, TextInput, View, FlatList } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
 import {deleteTodo, updateTodo } from '../actions/toDo';
 import {connect, useDispatch, useSelector} from 'react-redux';
@@ -11,6 +11,11 @@ const stateTache = [
 const Tache = ({navigation, route}) => {
     const [_currentState, setCurrentState] = useState(0);
     const [_listeMembre, setListeMembre] = useState();
+    const [_nameTache, setNameTache] = useState(route.params.nom);
+    const [_desc, setDesc] = useState(route.params.desc);
+    const [_date, setDate] = useState(route.params.date);
+    const [_url, setUrl] = useState(route.params.url);
+
     const dispatch = useDispatch();
     useEffect(() => { 
         if (_listeMembre == undefined){
@@ -30,38 +35,76 @@ const Tache = ({navigation, route}) => {
         dispatch(deleteTodo(route.params.id));
         navigation.navigate('TodoList');
     }
-    const updateThis = (data) => {
-        dispatch(updateTodo(data));
+    const saveModif = () => {
+        let newObject = {
+            id : route.params.id,
+            nom : _nameTache,
+            listeMembre : _listeMembre,
+            desc : _desc,
+            date : _date,
+            url : _url
+        }
+        console.debug("DANS LA FONCTION");
+        console.debug(newObject);
+        dispatch(updateTodo(newObject));
         navigation.navigate('TodoList');
     }
     
     return (
         <View style={styles.container}>
-
-                <Text>
-                    id : {route.params.id}{"\n"}
-                    nom : {route.params.nom}{"\n"}
-                    desc : {route.params.desc}{"\n"}
-                    date : {route.params.date}{"\n"}
-                    pj : {route.params.pj}{"\n"}
-                    url : {route.params.url}{"\n"}
-                        
-                </Text> 
-                <Button
-                    onPress={() => deleteThis()} 
-                    style={{backgroundColor : 'red' }}
-                    title="Supprimer"
-                />
-                <FlatList
-                    data={route.params.listeMembre}
-                    renderItem={
-                        ({item}) => 
-                            <Text style={styles.item}>{item.key}</Text>
-                    }
-                />
-
-             
-       
+            <TextInput
+                style={styles.input}
+                onChangeText={setNameTache}
+                value={_nameTache}
+                placeholder="Nom de la Tâche"
+            />
+            <TextInput
+                style={styles.input}
+                onChangeText={setDesc}
+                value={_desc}
+                placeholder="Description de la Tâche"
+            />
+            <TextInput
+                style={styles.input}
+                onChangeText={setDate}
+                value={_date}
+                placeholder="Date de la Tâche"
+            />
+            <TextInput
+                style={styles.input}
+                onChangeText={setUrl}
+                value={_url}
+                placeholder="Url de la Tâche"
+            /> 
+            <Button
+                onPress={() => deleteThis()} 
+                style={{backgroundColor : 'red' }}
+                title="Supprimer"
+            />
+            {/* <FlatList
+                data={_listeMembre}
+                renderItem={
+                    ({item}, idx) => 
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={(value, idx)=> {
+                                let array = [];
+                                for (let i = 0; i < _listeMembre.length; i++){
+                                    i == idx ? array.push(value) : array.push(_listeMembre[i]);
+                                }
+                                setListeMembre(array);
+                            }}
+                            value={item.key}
+                            placeholder="Url de la Tâche"
+                            key={idx}
+                        /> 
+                }
+            />  */}
+            <Button
+                onPress={() => saveModif()} 
+                style={{backgroundColor : 'red' }}
+                title="Enregistrer"
+            />         
         </View>
     );
 }

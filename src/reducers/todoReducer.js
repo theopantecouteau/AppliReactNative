@@ -1,4 +1,4 @@
-import { GET_TODO_ACTION, ADD_TODO_ACTION, UPDATE_TODO_ACTION, DELETE_TODO_ACTION, COMPLETE_TODO_ACTION} from '../constants';
+import { GET_TODO_ACTION, ADD_TODO_ACTION, UPDATE_TODO_ACTION, DELETE_TODO_ACTION } from '../constants';
 import Tache from '../components/Tache';
 const initialState = {
     tache : [
@@ -29,14 +29,14 @@ const todoReducer = (state = initialState, action) => {
                 ...state, //copying the original state
                 tache: state.tache.filter(taches => taches.id !== action.payload)                                
             };
-        case COMPLETE_TODO_ACTION: 
-            const index = state.tache.findIndex(taches => taches.id !== action.payload.id);                                                                   
+        case UPDATE_TODO_ACTION: 
+            console.debug("DANS LE REDUCER");
+            console.debug(action.payload);
+            const index = state.tache.findIndex(taches => taches.id !== action.payload.id) +1;                                                                   
             const newArray = [...state.tache]; 
-            newArray[index].nom = action.payload.nom
-            newArray[index].desc = action.payload.desc
-            newArray[index].date = action.payload.date
-            newArray[index].pj = action.payload.pj
-            newArray[index].url = action.payload.url
+            console.debug(index);
+            let object = action.payload;
+            newArray[index] = object;
             return { 
                 ...state, //copying the orignal state
                 tache: newArray, //reassingning todos to new array
