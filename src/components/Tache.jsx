@@ -78,31 +78,11 @@ const Tache = ({navigation, route}) => {
             /> 
             <Button
                 onPress={() => deleteThis()} 
-                style={{backgroundColor : 'red' }}
                 title="Supprimer"
             />
-            {/* <FlatList
-                data={_listeMembre}
-                renderItem={
-                    ({item}, idx) => 
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={(value, idx)=> {
-                                let array = [];
-                                for (let i = 0; i < _listeMembre.length; i++){
-                                    i == idx ? array.push(value) : array.push(_listeMembre[i]);
-                                }
-                                setListeMembre(array);
-                            }}
-                            value={item.key}
-                            placeholder="Url de la Tâche"
-                            key={idx}
-                        /> 
-                }
-            />  */}
+         
             <Button
                 onPress={() => saveModif()} 
-                style={{backgroundColor : 'red' }}
                 title="Enregistrer"
             />         
         </View>
@@ -112,27 +92,14 @@ export default Tache;
 const styles = StyleSheet.create({
     container: {
       marginTop : 100,
-      width: 1000,
       flex: 1,
-    },
-    test: {
-        color: 'red',
-        fontWeight: 'bold',
-        fontSize: 30,
-    },
-    header : {
-      backgroundColor : 'red'
     },
     input: {
       height: 40,
       margin: 12,
       borderWidth: 1,
       padding: 10,
+      width : '50%'
     },
-    item: {
-        padding: 10,
-        fontSize: 18,
-        height: 44,
-      },
   });
   
