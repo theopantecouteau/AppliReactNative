@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button,StyleSheet, Text, View, TextInput } from 'react-native';
+import { Button,StyleSheet, Text, View, TextInput, Animated } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
 import {connect, useDispatch, useSelector} from 'react-redux';
 import Tache from '../components/Tache.jsx'
@@ -7,7 +7,17 @@ import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../../firebase-config';
 import { getAuth } from 'firebase/auth';
 import { addTodo, deleteTodo } from '../actions/toDo';
+import DatePicker from 'react-native-datepicker';
 
+const [animatePress, setAnimatePress] = useState(new Animated.Value(1))
+
+const animateIn = () => {
+  Animated.timing(animatePress, {
+    toValue: 0.5,
+    duration: 500,
+    useNativeDriver: true // Add This line
+  }).start();
+}
 const TodoList = ({navigation ,todos, onToggle})  => {
 
     const dispatch = useDispatch();
@@ -19,34 +29,32 @@ const TodoList = ({navigation ,todos, onToggle})  => {
     const [_isCreate, setIsCreate] = useState(false);
     const [_nameTache, setNameTache] = useState("");
     const [_desc, setDesc] = useState("");
-    const [_date, setDate] = useState("");
+    const [_date, setDate] = useState(new Date());
     const [_url, setUrl] = useState("");
     const [_listToDo, setListToDo] = useState([]);
 
     
-    useEffect(()=> {
-        
+    useEffect(()=> {  
         console.debug("Taille de la ToDoListe : " + state_ToDoList.length);
         console.debug(state_ToDoList);
-            let array = [];
-            for (let idxTache = 0; idxTache < state_ToDoList.length; idxTache++){
-                let tache = state_ToDoList[idxTache];
-                if (tache != undefined){
-                    array.push(
-                        <Tache props={{
-                                nom : tache.nom, 
-                                id: tache.id, 
-                                listeMembre : tache.listeMembre,
-                                desc : tache.desc,
-                                date : tache.date,
-                                url : tache.url
-                            }}
-                        />
-                    )
-                }   
-            }
-            setListToDo(array);
-        
+        let array = [];
+        for (let idxTache = 0; idxTache < state_ToDoList.length; idxTache++){
+            let tache = state_ToDoList[idxTache];
+            if (tache != undefined){
+                array.push(
+                    <Tache props={{
+                            nom : tache.nom, 
+                            id: tache.id, 
+                            listeMembre : tache.listeMembre,
+                            desc : tache.desc,
+                            date : tache.date,
+                            url : tache.url
+                        }}
+                    />
+                )
+            }   
+        }
+        setListToDo(array);    
     },[state_ToDoList])
     
     const addtoToDoList = (donnee) => {
@@ -103,16 +111,35 @@ const TodoList = ({navigation ,todos, onToggle})  => {
                         placeholder="Nom de la Tâche"
                     />
                     <TextInput
-                        style={styles.input}
+                        style={styles.inputDesc}
                         onChangeText={setDesc}
                         value={_desc}
+                        multiline
+                        numberOfLines={10}
                         placeholder="Description de la Tâche"
                     />
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={setDate}
-                        value={_date}
-                        placeholder="Date de la Tâche"
+                    <DatePicker  style={styles.datePickerStyle}
+                        date={_date} // Initial date from state
+                        mode="date" // The enum of date, datetime and time
+                        placeholder="Choisir une date"
+                        format="DD-MM-YYYY"
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
+                        customStyles={{
+                            dateIcon: {
+                            //display: 'none',
+                            position: 'absolute',
+                            left: 0,
+                            top: 4,
+                            marginLeft: 0,
+                            },
+                            dateInput: {
+                            marginLeft: 36,
+                            },
+                        }}
+                        onDateChange={(date) => {
+                            setDate(date);
+                        }}
                     />
                     <TextInput
                         style={styles.input}
@@ -146,7 +173,7 @@ const TodoList = ({navigation ,todos, onToggle})  => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop : 50,
+    marginTop : '5%',
   },
   test: {
       color: 'red',
@@ -158,9 +185,17 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    margin: 12,
+    margin: '2%',
     borderWidth: 1,
     padding: 10,
+    width : '96%'
+  },
+  inputDesc: {
+    height: 80,
+    margin: '2%',
+    borderWidth: 1,
+    padding: 10,
+    width : '96%'
   },
   tabTache : {
     display : "block",
@@ -168,7 +203,11 @@ const styles = StyleSheet.create({
   },
   tache : {
     marginBottom : 20,
-  }
+  },
+  datePickerStyle: {
+    width: 200,
+    marginTop: 20,
+  },
 });
 
 export default TodoList;

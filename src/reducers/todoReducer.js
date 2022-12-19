@@ -7,7 +7,7 @@ const initialState = {
             id: "0",  
             listeMembre : [{key : "Hugo"}, {key : "Théo"}], 
             desc : "Description", 
-            date : "Date", 
+            date : "19-12-2022", 
             url : "www"
         }
     ]
