@@ -1,8 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button ,StyleSheet, Text, TextInput, View, FlatList } from 'react-native';
+import { Button ,StyleSheet, Text, TextInput, View, FlatList,Animated } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
 import {deleteTodo, updateTodo } from '../actions/toDo';
 import {connect, useDispatch, useSelector} from 'react-redux';
+import DatePicker from 'react-native-datepicker';
+
+const [animatePress, setAnimatePress] = useState(new Animated.Value(1))
+
+const animateIn = () => {
+  Animated.timing(animatePress, {
+    toValue: 0.5,
+    duration: 500,
+    useNativeDriver: true // Add This line
+  }).start();
+}
+
 const stateTache = [
     "ToDo",
     "Pending",
@@ -53,93 +65,91 @@ const Tache = ({navigation, route}) => {
     
     return (
         <View style={styles.container}>
-            {_isModif && (
-                <>
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setNameTache}
-                    value={_nameTache}
-                    placeholder="Nom de la Tâche" 
-                />
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setDesc}
-                    value={_desc}
-                    placeholder="Description de la Tâche" 
-                />
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setDate}
-                    value={_date}                      
-                    placeholder="Date de la Tâche" 
-                />
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setUrl}
-                    value={_url}
-                    placeholder="Url de la Tâche" 
-                />
-                <Button
-                    onPress={() => deleteThis()}
-                    style={{ backgroundColor: 'red' }}
-                    title="Supprimer" 
-                />
-                {/* <FlatList
-                data={_listeMembre}
-                renderItem={
-                    ({item}, idx) => 
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={(value, idx)=> {
-                                let array = [];
-                                for (let i = 0; i < _listeMembre.length; i++){
-                                    i == idx ? array.push(value) : array.push(_listeMembre[i]);
-                                }
-                                setListeMembre(array);
-                            }}
-                            value={item.key}
-                            placeholder="Url de la Tâche"
-                            key={idx}
-                        /> 
-                }
-            />  */}
+            <TextInput
+                style={styles.input}
+                onChangeText={setNameTache}
+                value={_nameTache}
+                placeholder="Nom de la Tâche"
+            />
+            <TextInput
+                style={styles.inputDesc}
+                onChangeText={setDesc}
+                value={_desc}
+                multiline
+                numberOfLines={10}
+                placeholder="Description de la Tâche"
+            />
+            <DatePicker  style={styles.datePickerStyle}
+                date={_date} // Initial date from state
+                mode="date" // The enum of date, datetime and time
+                placeholder="Choisir une date"
+                format="DD-MM-YYYY"
+                confirmBtnText="Confirm"
+                cancelBtnText="Cancel"
+                customStyles={{
+                    dateIcon: {
+                    //display: 'none',
+                    position: 'absolute',
+                    left: 0,
+                    top: 4,
+                    marginLeft: 0,
+                    },
+                            dateInput: {
+                            marginLeft: 36,
+                            },
+                        }}
+                        onDateChange={(date) => {
+                            setDate(date);
+                        }}
+                    />
+            <TextInput
+                style={styles.input}
+                onChangeText={setDate}
+                value={_date}
+
+                placeholder="Date de la Tâche"
+            />
+            <TextInput
+                style={styles.input}
+                onChangeText={setUrl}
+                value={_url}
+                keyboardType='url'
+                placeholder="Url de la Tâche"
+            /> 
+            <Button
+                onPress={() => deleteThis()} 
+                title="Supprimer"
+            />
+         
             <Button
                 onPress={() => saveModif()} 
-                style={{backgroundColor : 'red' }}
                 title="Enregistrer"
             />      
-                </>
-            )}
-
-   
         </View>
     );
 }
 export default Tache;
 const styles = StyleSheet.create({
     container: {
-      marginTop : 100,
-      width: 1000,
-      flex: 1,
-    },
-    test: {
-        color: 'red',
-        fontWeight: 'bold',
-        fontSize: 30,
-    },
-    header : {
-      backgroundColor : 'red'
+      marginTop : '5%',
     },
     input: {
       height: 40,
-      margin: 12,
+      margin: '2%',
       borderWidth: 1,
       padding: 10,
+      width : '96%'
     },
-    item: {
+    inputDesc: {
+        height: 80,
+        margin: '2%',
+        borderWidth: 1,
         padding: 10,
-        fontSize: 18,
-        height: 44,
+        width : '96%'
+      },
+      datePickerStyle: {
+        width: 200,
+        marginTop: 20,
       },
   });
   
