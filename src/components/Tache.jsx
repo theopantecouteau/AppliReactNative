@@ -9,6 +9,7 @@ const stateTache = [
     "Done"
 ];
 const Tache = ({navigation, route}) => {
+    const [_isModif, setIsModif] = useState(false);
     const [_currentState, setCurrentState] = useState(0);
     const [_listeMembre, setListeMembre] = useState();
     const [_nameTache, setNameTache] = useState(route.params.nom);
@@ -52,36 +53,38 @@ const Tache = ({navigation, route}) => {
     
     return (
         <View style={styles.container}>
-            <TextInput
-                style={styles.input}
-                onChangeText={setNameTache}
-                value={_nameTache}
-                placeholder="Nom de la Tâche"
-            />
-            <TextInput
-                style={styles.input}
-                onChangeText={setDesc}
-                value={_desc}
-                placeholder="Description de la Tâche"
-            />
-            <TextInput
-                style={styles.input}
-                onChangeText={setDate}
-                value={_date}
-                placeholder="Date de la Tâche"
-            />
-            <TextInput
-                style={styles.input}
-                onChangeText={setUrl}
-                value={_url}
-                placeholder="Url de la Tâche"
-            /> 
-            <Button
-                onPress={() => deleteThis()} 
-                style={{backgroundColor : 'red' }}
-                title="Supprimer"
-            />
-            {/* <FlatList
+            {_isModif && (
+                <>
+                <TextInput
+                    style={styles.input}
+                    onChangeText={setNameTache}
+                    value={_nameTache}
+                    placeholder="Nom de la Tâche" 
+                />
+                <TextInput
+                    style={styles.input}
+                    onChangeText={setDesc}
+                    value={_desc}
+                    placeholder="Description de la Tâche" 
+                />
+                <TextInput
+                    style={styles.input}
+                    onChangeText={setDate}
+                    value={_date}                      
+                    placeholder="Date de la Tâche" 
+                />
+                <TextInput
+                    style={styles.input}
+                    onChangeText={setUrl}
+                    value={_url}
+                    placeholder="Url de la Tâche" 
+                />
+                <Button
+                    onPress={() => deleteThis()}
+                    style={{ backgroundColor: 'red' }}
+                    title="Supprimer" 
+                />
+                {/* <FlatList
                 data={_listeMembre}
                 renderItem={
                     ({item}, idx) => 
@@ -104,7 +107,11 @@ const Tache = ({navigation, route}) => {
                 onPress={() => saveModif()} 
                 style={{backgroundColor : 'red' }}
                 title="Enregistrer"
-            />         
+            />      
+                </>
+            )}
+
+   
         </View>
     );
 }
