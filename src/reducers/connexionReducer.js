@@ -1,18 +1,14 @@
 import {LOGIN} from '../constants/index';
 
-const initialState = {
-    isConnected: false
-};
+const initialState = {isConnected : false};
 
 const connexionReducer = (state = initialState, action) => {
     switch(action.type) {
 
-        case LOGIN:
+        case LOGIN :
             return {
-                ...state,
                 isConnected : action.payload.isConnected
             };
-
         default:
             return state;
     }
