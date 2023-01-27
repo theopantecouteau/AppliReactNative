@@ -7,5 +7,3 @@ export const UPDATE_USER_DATA = 'UPDATE_USER_DATA';
 
 // AddressBook
 export const FETCH_ADDRESS_BOOK = 'FETCH_ADDRESS_BOOK';
-
-e
