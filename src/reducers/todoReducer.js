@@ -1,4 +1,4 @@
-import { GET_TODO_ACTION, ADD_TODO_ACTION, UPDATE_TODO_ACTION, DELETE_TODO_ACTION } from '../constants';
+import { GET_TASK, ADD_TASK, UPDATE_TASK, DELETE_TASK } from '../constants';
 
 const initialState = {
     tache : [
@@ -7,7 +7,7 @@ const initialState = {
             id: "0",  
             listeMembre : [{key : "Hugo"}, {key : "Théo"}], 
             desc : "Description", 
-            date : "19-12-2022", 
+            date : "December 19, 2022", 
             url : "www"
         }
     ]
@@ -15,21 +15,21 @@ const initialState = {
 
 const todoReducer = (state = initialState, action) => {
     switch(action.type){
-        case GET_TODO_ACTION:
+        case GET_TASK:
             return {
                 tache : action.payload.tache
             };
-        case ADD_TODO_ACTION:
+        case ADD_TASK:
             return {
                 ...state,
                 tache : [...state.tache, action.payload]
             };
-        case DELETE_TODO_ACTION: 
+        case DELETE_TASK: 
             return {  // returning a copy of orignal state
                 ...state, //copying the original state
                 tache: state.tache.filter(taches => taches.id !== action.payload)                                
             };
-        case UPDATE_TODO_ACTION: 
+        case UPDATE_TASK: 
             console.debug("DANS LE REDUCER");
             console.debug(action.payload);
             const index = state.tache.findIndex(taches => taches.id !== action.payload.id) +1;                                                                   

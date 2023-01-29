@@ -7,17 +7,9 @@ import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../../firebase-config';
 import { getAuth } from 'firebase/auth';
 import { addTodo, deleteTodo } from '../actions/toDo';
-import DatePicker from 'react-native-datepicker';
+import RNDateTimePicker from '@react-native-community/datetimepicker'
 
-const [animatePress, setAnimatePress] = useState(new Animated.Value(1))
 
-const animateIn = () => {
-  Animated.timing(animatePress, {
-    toValue: 0.5,
-    duration: 500,
-    useNativeDriver: true // Add This line
-  }).start();
-}
 const TodoList = ({navigation ,todos, onToggle})  => {
 
     const dispatch = useDispatch();
@@ -32,7 +24,7 @@ const TodoList = ({navigation ,todos, onToggle})  => {
     const [_date, setDate] = useState(new Date());
     const [_url, setUrl] = useState("");
     const [_listToDo, setListToDo] = useState([]);
-
+    
     
     useEffect(()=> {  
         console.debug("Taille de la ToDoListe : " + state_ToDoList.length);
@@ -118,27 +110,12 @@ const TodoList = ({navigation ,todos, onToggle})  => {
                         numberOfLines={10}
                         placeholder="Description de la Tâche"
                     />
-                    <DatePicker  style={styles.datePickerStyle}
-                        date={_date} // Initial date from state
-                        mode="date" // The enum of date, datetime and time
-                        placeholder="Choisir une date"
-                        format="DD-MM-YYYY"
-                        confirmBtnText="Confirm"
-                        cancelBtnText="Cancel"
-                        customStyles={{
-                            dateIcon: {
-                            //display: 'none',
-                            position: 'absolute',
-                            left: 0,
-                            top: 4,
-                            marginLeft: 0,
-                            },
-                            dateInput: {
-                            marginLeft: 36,
-                            },
-                        }}
-                        onDateChange={(date) => {
-                            setDate(date);
+                    <RNDateTimePicker  
+                        value={_date} // Initial date from state
+                        mode={'date'} 
+                        is24Hour={true}
+                        onChange={(event, date) => {
+                            setDate(new Date(date));
                         }}
                     />
                     <TextInput
