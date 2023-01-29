@@ -1,9 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button ,StyleSheet, Text, TextInput, View, FlatList,Animated } from 'react-native';
+import { Button ,StyleSheet, Text, TextInput, View, FlatList,Image } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
 import {deleteTodo, updateTodo } from '../actions/toDo';
 import {connect, useDispatch, useSelector} from 'react-redux';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
+import * as ImagePicker from 'expo-image-picker';
 
 const stateTache = [
     "ToDo",
@@ -18,7 +19,7 @@ const Tache = ({navigation, route}) => {
     const [_desc, setDesc] = useState(route.params.desc);
     const [_date, setDate] = useState(new Date(route.params.date));
     const [_url, setUrl] = useState(route.params.url);
-
+    const [_attachment, setAttachment] = useState(route.params.attachment);
     const dispatch = useDispatch();
     
     useEffect(() => { 
@@ -39,6 +40,25 @@ const Tache = ({navigation, route}) => {
         dispatch(deleteTodo(route.params.id));
         navigation.navigate('TodoList');
     }
+
+    const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        console.debug(result);
+
+        if (!result.canceled) {
+            console.debug("CEST PARTI");
+            console.debug(result);
+            setAttachment(result.uri);
+        }
+    };
+
     const saveModif = () => {
         let newObject = {
             id : route.params.id,
@@ -46,7 +66,8 @@ const Tache = ({navigation, route}) => {
             listeMembre : _listeMembre,
             desc : _desc,
             date : _date,
-            url : _url
+            url : _url,
+            attachment : _attachment
         }
         console.debug("DANS LA FONCTION");
         console.debug(newObject);
@@ -80,18 +101,12 @@ const Tache = ({navigation, route}) => {
             />
             <TextInput
                 style={styles.input}
-                onChangeText={setDate}
-                value={_date}
-
-                placeholder="Date de la Tâche"
-            />
-            <TextInput
-                style={styles.input}
                 onChangeText={setUrl}
                 value={_url}
                 keyboardType='url'
                 placeholder="Url de la Tâche"
-            /> 
+            />
+            <Image source={{ uri: _attachment }} style={{ width: 200, height: 200 }} onPress={pickImage}/>
             <Button
                 onPress={() => deleteThis()} 
                 title="Supprimer"

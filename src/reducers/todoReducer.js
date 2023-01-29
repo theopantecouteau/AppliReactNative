@@ -8,7 +8,8 @@ const initialState = {
             listeMembre : [{key : "Hugo"}, {key : "Théo"}], 
             desc : "Description", 
             date : "December 19, 2022", 
-            url : "www"
+            url : "www", 
+            attachment: ".jpg"
         }
     ]
 }

@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button,StyleSheet, Text, View, TextInput, Animated } from 'react-native';
+import { Button,StyleSheet, Text, View, TextInput, Image } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
 import {connect, useDispatch, useSelector} from 'react-redux';
 import Tache from '../components/Tache.jsx'
@@ -8,7 +8,7 @@ import { firebaseConfig } from '../../firebase-config';
 import { getAuth } from 'firebase/auth';
 import { addTodo, deleteTodo } from '../actions/toDo';
 import RNDateTimePicker from '@react-native-community/datetimepicker'
-
+import * as ImagePicker from 'expo-image-picker';
 
 const TodoList = ({navigation ,todos, onToggle})  => {
 
@@ -24,7 +24,7 @@ const TodoList = ({navigation ,todos, onToggle})  => {
     const [_date, setDate] = useState(new Date());
     const [_url, setUrl] = useState("");
     const [_listToDo, setListToDo] = useState([]);
-    
+    const [_attachment, setAttachment] = useState();
     
     useEffect(()=> {  
         console.debug("Taille de la ToDoListe : " + state_ToDoList.length);
@@ -52,6 +52,25 @@ const TodoList = ({navigation ,todos, onToggle})  => {
     const addtoToDoList = (donnee) => {
         dispatch(addTodo(donnee));
     }   
+
+    
+    const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        console.debug(result);
+
+        if (!result.canceled) {
+            console.debug("CEST PARTI");
+            console.debug(result.uri);
+            setAttachment(result.uri);
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -124,24 +143,31 @@ const TodoList = ({navigation ,todos, onToggle})  => {
                         value={_url}
                         placeholder="Url de la Tâche"
                     />
+                    <Button title="Choisissez une image" onPress={pickImage} />
+                    <Image source={{ uri: _attachment }} style={{ width: 200, height: 200 }} />
                     <Button
                         onPress={() => {
-                            addtoToDoList({
+                            let newTache = {
                                 nom : _nameTache, 
-                                id: cptIdNumber, 
+                                id: Number(cptIdNumber), 
                                 listeMembre : ["Hugo", "Theo"],
                                 desc : _desc,
                                 date : _date,
-                                url : _url
-                            });
+                                url : _url,
+                                attachment : _attachment
+                            };
+                            console.info(newTache);
+                            addtoToDoList(newTache);
                             setIsCreate(false);
                             setNameTache("");
                             setUrl("");
-                            setDate("");
+                            setDate(new Date());
                             setDesc("");
+                            setAttachment("");
                         } }
                         title="Ajouter la tache" 
                     />
+
                 </>
             )}
         </View>
