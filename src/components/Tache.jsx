@@ -43,13 +43,21 @@ const Tache = ({navigation, route}) => {
 
     const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
+    const { granted } = await ImagePicker.requestCameraPermissionsAsync()    
+    
+        if (granted === true) {
+          let image = await ImagePicker.launchCameraAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [4, 3],
             quality: 1,
-        });
-
+          })
+        
+          await uploadImage(image)
+        
+        } else {
+          setPermissionOverlayVisible(true)
+        }
         console.debug(result);
 
         if (!result.canceled) {
@@ -58,6 +66,48 @@ const Tache = ({navigation, route}) => {
             setAttachment(result.uri);
         }
     };
+
+    const uploadImage = async (image) => {
+        if (image.cancelled === false) {
+            setAttachment(image.uri)
+            const filename = image.uri.split('/').pop();
+        
+            const file = new ReactNativeFile({
+                uri: image.uri,
+                name: filename,
+                type: `image/${filename.split('.').pop()}`
+            });
+        
+            try {
+                await updateProfilePictureMutation({
+                    variables: {
+                        id: data?.user?.id,
+                        profilePicture: file
+                    },
+                    update: (cache, { data }) => {
+                        try {
+                            const getUserByIdCachedData = cache.readQuery<GetUserByIdQuery>({ query: GetUserByIdDocument, variables: { id: userId } })
+                            if (!getUserByIdCachedData) return
+                
+                            const newData = {
+                                ...getUserByIdCachedData,
+                                user: {
+                                ...getUserByIdCachedData.user,
+                                profilePicture: data.updateUser.profilePicture
+                                }
+                            }
+                
+                            cache.writeQuery({ query: GetUserByIdDocument, variables: { id: userId }, data: newData })
+                        } catch (e) {
+                        console.error(e)
+                        }
+                    }
+                })
+            } catch (e) {
+          }
+          setAttachment(null)
+        }
+    }
 
     const saveModif = () => {
         let newObject = {
