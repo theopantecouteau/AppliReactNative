@@ -55,23 +55,52 @@ const TodoList = ({navigation ,todos, onToggle})  => {
 
     
     const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
+      const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync()    
+    
+        if (granted === true) {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
 
-        console.debug(result);
+            console.debug(result);
 
-        if (!result.canceled) {
-            console.debug("CEST PARTI");
-            console.debug(result.uri);
-            setAttachment(result.uri);
+            if (!result.canceled) {
+                console.debug("CEST PARTI");
+                console.debug(result.uri);
+                setAttachment(result.uri);
+                uploadImage();
+            }
         }
     };
 
+    const uploadImage = async () => {
+        const { uri } = _attachment;
+        const filename = uri.substring(uri.lastIndexOf('/') + 1);
+        const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+        const task = storage()
+            .ref(filename)
+            .putFile(uploadUri);
+        // set progress state
+        task.on('state_changed', snapshot => {
+            setTransferred(
+            Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
+            );
+        });
+        try {
+            await task;
+        } catch (e) {
+            console.error(e);
+        }
+        setUploading(false);
+        Alert.alert(
+            'Photo uploaded!',
+            'Your photo has been uploaded to Firebase Cloud Storage!'
+        );
+        setAttachment(null);
+    };
     return (
         <View style={styles.container}>
             {!_isCreate && (
@@ -84,29 +113,24 @@ const TodoList = ({navigation ,todos, onToggle})  => {
     
             )}
             {!_isCreate && _listToDo.length > 0 && (
-                <View style={styles.tabTache}>
-                    {_listToDo.map((value,idx) => {
-                        return (
-                                <Text
-                                    key={idx}
-                                    style={styles.tache}
-                                    onPress={() => {
-                                            navigation.navigate('Tache', {
-                                                id : value.props.props.id,
-                                                nom : value.props.props.nom, 
-                                                listeMembre :  value.props.props.listeMembre,
-                                                desc : value.props.props.desc,
-                                                date : value.props.props.date,
-                                                url : value.props.props.url
-                                            })
-                                    }}
-                                >
-                                    {value.props.props.id} : {value.props.props.nom}
-                                </Text>
-                            
-                        );
-                    })}
-                </View>
+                _listToDo.map(task => (
+                    <View key={task.id}>
+                        <Text>{task.name}</Text>
+                        <Button
+                        title='Check'
+                        onPress={() => toggleCheckboxes(task.id)}
+                        />
+
+                        <Button title="Modifier" onPress={() => console.log('Modification de la tâche non implémentée')} />
+                        <Button title="Dupliquer" onPress={() => console.log('Duplication de la tâche non implémentée')} />
+                        <Button title="Supprimer" onPress={() => deleteTask(task.id)} />
+                        <Button
+                        title="Détails"
+                        onPress={() => navigation.navigate('Tache', { task })}
+                        />
+                    </View>
+                    )
+                )
             )}
             {!_isCreate  && _listToDo.length == 0 && (
                 <Text>
@@ -154,7 +178,8 @@ const TodoList = ({navigation ,todos, onToggle})  => {
                                 desc : _desc,
                                 date : _date,
                                 url : _url,
-                                attachment : _attachment
+                                attachment : _attachment,
+                                checkbox: false
                             };
                             console.info(newTache);
                             addtoToDoList(newTache);
