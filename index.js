@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { RootSiblingParent } from 'react-native-root-siblings'
 
 import configureStore from './src/app/store';
+import {getUserData} from "./src/actions/users";
 
 const store = configureStore()
 

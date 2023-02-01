@@ -1,9 +1,7 @@
 import { View, Text, StyleSheet, TextInput } from 'react-native'
 import React, {useState} from 'react'
 import { Button } from 'react-native-paper';
-import { getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
-import { auth, db } from '../../firebase-config';
-import {setDoc, doc, Timestamp} from 'firebase/firestore';
+import { db, auth} from '../../firebase-config';
 import Toast from "react-native-root-toast";
 import log from '../../loggerConfig.js';
 
@@ -16,7 +14,7 @@ export default function Register({navigation, props}) {
     const [lastname, setLastname] = useState("");
 
     const handleSignUp = async () => {
-        createUserWithEmailAndPassword(auth, id, pwd)
+        auth.createUserWithEmailAndPassword(id, pwd)
         .then((userCredential) => {
             log.info('User created')
             const user = userCredential.user;
@@ -50,8 +48,8 @@ export default function Register({navigation, props}) {
                 todoList : [],
                 addressBook : []
             };
-            await setDoc(doc(db, "users", userUid), userDoc)
-            .then((res) => log.debug(res));
+            await db.collection("users").doc(userUid).set(userDoc).then((res) => log.info("user created"))
+                                                                 .catch((error) => log.error("error while creating user ", error));
         }
         catch(e){
             log.error('Error in creating user : {1}', e)
