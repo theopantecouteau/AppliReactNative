@@ -4,7 +4,7 @@ import {addDoc, collection} from "firebase/firestore";
 import log from "../../loggerConfig";
 import {db} from "../../firebase-config";
 import {useDispatch, useSelector} from "react-redux";
-import firebase from "firebase/compat";
+import firebase from "firebase";
 import {updateUserData} from "../actions/users";
 
 const AddressBook = ({navigation}) => {

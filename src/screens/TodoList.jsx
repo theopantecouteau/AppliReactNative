@@ -3,12 +3,13 @@ import { Button,StyleSheet, Text, View, TextInput, Image } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
 import {useDispatch, useSelector} from 'react-redux';
 import Tache from '../components/Tache.jsx'
-import { db } from '../../firebase-config';
+import { db, storage } from '../../firebase-config';
 import { getAuth } from 'firebase/auth';
 import { addTodo, deleteTodo, toggleCheckboxes } from '../actions/toDo';
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import * as ImagePicker from 'expo-image-picker/src/ImagePicker';
-
+import {ref, uploadBytes} from "firebase/storage";
+import { addDoc, collection } from 'firebase/firestore';
 const TodoList = ({ navigation })  => {
 
     const dispatch = useDispatch();
@@ -20,7 +21,7 @@ const TodoList = ({ navigation })  => {
     const [_date, setDate] = useState(new Date());
     const [_url, setUrl] = useState("");
     const [_listToDo, setListToDo] = useState([]);
-    const [_attachment, setAttachment] = useState();
+    const [_attachment, setAttachment] = useState("/.jpg");
     
     useEffect(()=> {  
         console.debug("Taille de la ToDoListe : " + state_ToDoList.length);
@@ -52,46 +53,59 @@ const TodoList = ({ navigation })  => {
 
     
     const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
+        const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync(); 
 
-        console.debug(result);
+        if (granted === true) {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
 
-        if (!result.canceled) {
-            console.debug("CEST PARTI");
             console.debug(result);
-            setAttachment(result.uri);
-        }
-    };
 
-    const uploadImage = async () => {
-        const { uri } = _attachment;
-        const filename = uri.substring(uri.lastIndexOf('/') + 1);
-        const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
-        const task = storage()
-            .ref(filename)
-            .putFile(uploadUri);
-        // set progress state
-        task.on('state_changed', snapshot => {
-            setTransferred(
-            Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000
-            );
+            if (!result.canceled) {
+                console.debug("CEST PARTI");
+                console.debug(result);
+                setAttachment(result.uri);
+                await uploadImage(result.uri);
+            }
+        };
+    }
+
+    const uploadImage = async (uri) => {
+        const metadata = { contentType: "image/jpg" };
+        const imgRef = ref(storage, `images/im1.jpg` );
+        const localPath = uri;
+        console.error(uri);
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+            resolve(xhr.response);
+            };
+            xhr.onerror = function (e) {
+            reject(new TypeError("Network request failed"));
+            };
+            xhr.responseType = "blob";
+            xhr.open("GET", localPath, true);
+            xhr.send(null);
         });
-        try {
-            await task;
-        } catch (e) {
-            console.error(e);
-        }
-        setUploading(false);
-        Alert.alert(
-            'Photo uploaded!',
-            'Your photo has been uploaded to Firebase Cloud Storage!'
-        );
+        console.debug("LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        console.debug(imgRef);
+        //    let uploadImage = fileRef.putFile(uri);
+        // Firebase API should change while you're working with Firebase V9
+        const img = await fetch(uri);
+        const bytes = await img.blob();
+
+        const ref = firebase
+        .storage()
+        .ref()
+        .child("images" + "/" + metadata + "/" + uri);
+        await ref.put(bytes)
+        blob.close();
+
+
         setAttachment(null);
     };
     return (
