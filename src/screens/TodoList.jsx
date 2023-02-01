@@ -17,7 +17,7 @@ const TodoList = ({navigation ,todos, onToggle})  => {
     const app = initializeApp(firebaseConfig);
     const aut = getAuth(app);
 
-    const  cptIdNumber = state_ToDoList.length > 0 ?  Number([state_ToDoList.length -1].id) +1: 0;
+    let  cptIdNumber = state_ToDoList.length > 0 ?  Number([state_ToDoList.length -1].id) +1: 0;
     const [_isCreate, setIsCreate] = useState(false);
     const [_nameTache, setNameTache] = useState("");
     const [_desc, setDesc] = useState("");
