@@ -1,11 +1,10 @@
 import * as React from "react";
 import { Button, View, Text } from "react-native";
 import { useSelector } from "react-redux";
+import log from "../../loggerConfig"
 
 const HomeScreen = ({navigation}) => {
-
     const isConnected = useSelector(state => state.isConnected.isConnected);
-    console.debug(useSelector(state => state.user)) ;
     return(
         <>
         {isConnected == true
