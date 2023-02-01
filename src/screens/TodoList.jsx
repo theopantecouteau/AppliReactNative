@@ -40,7 +40,8 @@ const TodoList = ({navigation ,todos, onToggle})  => {
                             listeMembre : tache.listeMembre,
                             desc : tache.desc,
                             date : tache.date,
-                            url : tache.url
+                            url : tache.url,
+                            checkbox : false
                         }}
                     />
                 )
