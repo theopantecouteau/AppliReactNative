@@ -1,4 +1,4 @@
-import { GET_TASK, ADD_TASK, UPDATE_TASK, DELETE_TASK, DUPLICATE_TASK, TOGGLE_CHECKBOXES} from '../constants';
+import { GET_TASK, ADD_TASK, UPDATE_TASK, DELETE_TASK, DUPLICATE_TASK, TOGGLE_CHECKBOXES } from '../constants';
 
 const initialState = {
     tache : [
@@ -9,7 +9,8 @@ const initialState = {
             desc : "Description", 
             date : "December 19, 2022", 
             url : "www", 
-            attachment: ".jpg"
+            attachment: ".jpg",
+            checkbox : false
         }
     ]
 }

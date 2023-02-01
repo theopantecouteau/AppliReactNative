@@ -1,22 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
 import { Button,StyleSheet, Text, View, TextInput, Image } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
-import {connect, useDispatch, useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Tache from '../components/Tache.jsx'
-import { initializeApp } from 'firebase/app';
-import { firebaseConfig } from '../../firebase-config';
+import { db } from '../../firebase-config';
 import { getAuth } from 'firebase/auth';
 import { addTodo, deleteTodo, toggleCheckboxes } from '../actions/toDo';
 import RNDateTimePicker from '@react-native-community/datetimepicker'
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from 'expo-image-picker/src/ImagePicker';
 
-const TodoList = ({navigation ,todos, onToggle})  => {
+const TodoList = ({ navigation })  => {
 
     const dispatch = useDispatch();
     const state_ToDoList = useSelector(state => state.tache.tache);
-    const app = initializeApp(firebaseConfig);
-    const aut = getAuth(app);
-
     let  cptIdNumber = state_ToDoList.length > 0 ?  Number([state_ToDoList.length -1].id) +1: 0;
     const [_isCreate, setIsCreate] = useState(false);
     const [_nameTache, setNameTache] = useState("");
@@ -56,24 +52,20 @@ const TodoList = ({navigation ,todos, onToggle})  => {
 
     
     const pickImage = async () => {
-      const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync()    
-    
-        if (granted === true) {
-            let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.All,
-                allowsEditing: true,
-                aspect: [4, 3],
-                quality: 1,
-            });
+    // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
 
+        console.debug(result);
+
+        if (!result.canceled) {
+            console.debug("CEST PARTI");
             console.debug(result);
-
-            if (!result.canceled) {
-                console.debug("CEST PARTI");
-                console.debug(result.uri);
-                setAttachment(result.uri);
-                uploadImage();
-            }
+            setAttachment(result.uri);
         }
     };
 

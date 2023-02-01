@@ -3,7 +3,7 @@ import React from 'react';
 import App from './App';
 import { name as appName } from './app.json';
 import { Provider } from 'react-redux';
-import { RootSiblingParent } from 'react-native-root-siblings'
+import { RootSiblingParent } from 'react-native-root-siblings';
 
 import configureStore from './src/app/store';
 
