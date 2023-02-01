@@ -1,12 +1,15 @@
 import { View, Text } from 'react-native'
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 const Dashboard = ({navigation, route}) => {
-    console.log(route.params.name)
+  const dispatch = useDispatch();
+  const user = useSelector(state => state.user._z.user)
+  console.debug(user);
   return (
     <View>
       <Text>Dashboard</Text>
-      <Text>Bonjour {route.params.name}</Text>
+      <Text>Bonjour {user.firstname}</Text>
     </View>
   )
 }

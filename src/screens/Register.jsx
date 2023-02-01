@@ -2,9 +2,10 @@ import { View, Text, StyleSheet, TextInput } from 'react-native'
 import React, {useState} from 'react'
 import { Button } from 'react-native-paper';
 import { getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
-import { initializeApp } from 'firebase/app';
-import { firebaseConfig } from '../../firebase-config';
-import {getFirestore, setDoc, doc, Timestamp} from 'firebase/firestore';
+import { auth, db } from '../../firebase-config';
+import {setDoc, doc, Timestamp} from 'firebase/firestore';
+import Toast from "react-native-root-toast";
+import log from '../../loggerConfig.js';
 
 export default function Register({navigation, props}) {
 
@@ -12,34 +13,48 @@ export default function Register({navigation, props}) {
     const [pwd, setPwd] = useState("");
     const [firstname, setFirstname] = useState("");
     const [data, setDate] = useState("");
-    const [surname, setSurname] = useState("");
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+    const [lastname, setLastname] = useState("");
 
     const handleSignUp = async () => {
         createUserWithEmailAndPassword(auth, id, pwd)
         .then((userCredential) => {
-            console.debug("User created");
+            log.info('User created')
             const user = userCredential.user;
-            console.debug(user);
+            log.info('User : ' + user)
             createUserInDb(user.uid);
+            navigation.navigate('Login');
+            Toast.show('Compte crée', {duration: Toast.durations.SHORT, animation : true, backgroundColor : "green", position: Toast.positions.TOP})
         })
-        .catch((error) => console.debug(error));
+        .catch((error) => {
+            log.error(error.code)
+            switch(error.code) {
+                case "auth/account-exists-with-different-credential":
+                case "auth/email-already-in-use":
+                    Toast.show('Email déjà utilisé', {duration: Toast.durations.SHORT, animation : true, backgroundColor : "orange", position: Toast.positions.TOP})
+                    break;
+                case "auth/weak-password":
+                    Toast.show('Mot de passe trop faible', {duration: Toast.durations.SHORT, animation : true, backgroundColor : "orange", position: Toast.positions.TOP})
+                    break;
+                case "auth/invalid-email":
+                    Toast.show('Email invalide', {duration: Toast.durations.SHORT, animation : true, backgroundColor : "orange", position: Toast.positions.TOP});
+                    break;
+            }
+        });
     }
 
     async function createUserInDb(userUid){
         try{
             const userDoc = {
                 firstname : firstname,
-                surname : surname
+                lastname : lastname,
+                todoList : [],
+                addressBook : []
             };
             await setDoc(doc(db, "users", userUid), userDoc)
-            .then((res) => console.debug(res));
+            .then((res) => log.debug(res));
         }
         catch(e){
-            console.debug("Error in creating user", e);
+            log.error('Error in creating user : {1}', e)
         }
     }
 
@@ -50,7 +65,7 @@ export default function Register({navigation, props}) {
                 <TextInput style={styles.textInput} onChangeText={newText => setId(newText)} placeholder={"Email"}/>
                 <TextInput style={styles.textInput} onChangeText={newText => setPwd(newText)} placeholder={"Password"}/>
                 <TextInput style={styles.textInput} onChangeText={newText => setFirstname(newText)} placeholder={"Firstname"}/>
-                <TextInput style={styles.textInput} onChangeText={newText => setSurname(newText)} placeholder={"Surname"}/>
+                <TextInput style={styles.textInput} onChangeText={newText => setLastname(newText)} placeholder={"Surname"}/>
                 <Button onPress={handleSignUp}>Register</Button>
             </View>
         </View>

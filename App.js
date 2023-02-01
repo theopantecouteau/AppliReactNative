@@ -9,48 +9,43 @@ import ShoppingList from "./src/screens/ShoppingList";
 import Login from "./src/screens/Login";
 import Register from "./src/screens/Register";
 import Dashboard from "./src/screens/Dashboard";
-import Tache from "./src/components/Tache";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-          />
-          <Stack.Screen
-            name="TodoList"
-            component={TodoList}
-          />
-          <Stack.Screen
-            name="ShoppingList"
-            component={ShoppingList}
-          />
-          <Stack.Screen
-            name="AddressBook"
-            component={AddressBook}
-          />
-          <Stack.Screen
-            name="Login"
-            component={Login}
-          />
-          <Stack.Screen
-            name="Register"
-            component={Register}
-          />
-          <Stack.Screen
-            name="Dashboard"
-            component={Dashboard}
-          />
-          <Stack.Screen
-            name="Tache"
-            component={Tache}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+            />
+            <Stack.Screen
+              name="TodoList"
+              component={TodoList}
+            />
+            <Stack.Screen
+              name="ShoppingList"
+              component={ShoppingList}
+            />
+            <Stack.Screen
+              name="AddressBook"
+              component={AddressBook}
+            />
+            <Stack.Screen
+              name="Login"
+              component={Login}
+            />
+            <Stack.Screen
+              name="Register"
+              component={Register}
+            />
+            <Stack.Screen
+              name="Dashboard"
+              component={Dashboard}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
   );
 }
 
