@@ -1,4 +1,4 @@
-import { GET_TASK, ADD_TASK, UPDATE_TASK, DELETE_TASK } from '../constants';
+import { GET_TASK, ADD_TASK, UPDATE_TASK, DELETE_TASK, DUPLICATE_TASK, TOGGLE_CHECKBOXES} from '../constants';
 
 const initialState = {
     tache : [
@@ -42,6 +42,34 @@ const todoReducer = (state = initialState, action) => {
                 ...state, //copying the orignal state
                 tache: newArray, //reassingning todos to new array
             };
+        case DUPLICATE_TASK: 
+            const task = state.tasks.find(t => t.id === action.payload.id);
+            if (!task) {
+                return state;
+            }
+            const newTask = {
+                ...task,
+                id: uuid(), // générez un nouvel ID pour la tâche dupliquée
+            };
+            return {
+                ...state,
+                tasks: [...state.tasks, newTask],
+            };
+        
+        case TOGGLE_CHECKBOXES: 
+            return {
+                ...state,
+                tasks: state.tasks.map(t => {
+                    if (t.id === action.payload.id) {
+                        return {
+                            ...t,
+                            checkbox: !t.checkbox,
+                        };
+                    }
+                    return t;
+                }),
+            };
+        
         default : 
             return state;
     }

@@ -6,7 +6,7 @@ import Tache from '../components/Tache.jsx'
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../../firebase-config';
 import { getAuth } from 'firebase/auth';
-import { addTodo, deleteTodo } from '../actions/toDo';
+import { addTodo, deleteTodo, toggleCheckboxes } from '../actions/toDo';
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import * as ImagePicker from 'expo-image-picker';
 
@@ -123,7 +123,7 @@ const TodoList = ({navigation ,todos, onToggle})  => {
 
                         <Button title="Modifier" onPress={() => console.log('Modification de la tâche non implémentée')} />
                         <Button title="Dupliquer" onPress={() => console.log('Duplication de la tâche non implémentée')} />
-                        <Button title="Supprimer" onPress={() => deleteTask(task.id)} />
+                        <Button title="Supprimer" onPress={() => deleteTodo(task)} />
                         <Button
                         title="Détails"
                         onPress={() => navigation.navigate('Tache', { task })}
