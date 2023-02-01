@@ -3,13 +3,10 @@ import { Button,StyleSheet, Text, View, TextInput, Image } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
 import {useDispatch, useSelector} from 'react-redux';
 import Tache from '../components/Tache.jsx'
-import { db, storage } from '../../firebase-config';
-import { getAuth } from 'firebase/auth';
 import { addTodo, deleteTodo, toggleCheckboxes } from '../actions/toDo';
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import * as ImagePicker from 'expo-image-picker/src/ImagePicker';
-import {ref, uploadBytes} from "firebase/storage";
-import { addDoc, collection } from 'firebase/firestore';
+import { storage } from '../../firebase-config';
 const TodoList = ({ navigation })  => {
 
     const dispatch = useDispatch();
@@ -75,35 +72,59 @@ const TodoList = ({ navigation })  => {
     }
 
     const uploadImage = async (uri) => {
-        const metadata = { contentType: "image/jpg" };
-        const imgRef = ref(storage, `images/im1.jpg` );
+        console.debug(storage);
+        let storageRef = storage.ref("images");
+        
+        console.debug(storageRef);
+        const metadata = { contentType: "image/jpeg" };
         const localPath = uri;
-        console.error(uri);
-        const blob = await new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.onload = function () {
-            resolve(xhr.response);
-            };
-            xhr.onerror = function (e) {
-            reject(new TypeError("Network request failed"));
-            };
+        
+        var getFileBlob = function (url, cb) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", url);
             xhr.responseType = "blob";
-            xhr.open("GET", localPath, true);
-            xhr.send(null);
-        });
-        console.debug("LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        console.debug(imgRef);
-        //    let uploadImage = fileRef.putFile(uri);
-        // Firebase API should change while you're working with Firebase V9
+            xhr.contentType = "image.jpg";
+            xhr.addEventListener('load', function() {
+                cb(xhr.response);
+            });
+            xhr.send();
+        };
         const img = await fetch(uri);
         const bytes = await img.blob();
+        // console.debug("BLOB");
+        // console.debug(bytes);
+        const ref = storage.ref("images").child('img1.jpg');
+        // // ref.put(bytes).then((snapshot) => {
+        // //     console.log('Uploaded an array!');
+        // // });
+        console.debug('2');
+        // //4.
+        
+        getFileBlob(uri, blob =>{
+            let img = new Blob([blob.data], {type : 'image/jpg'});
+            storageRef.put(blob).then(function(snapshot) {
+                console.log('Uploaded a blob or file!');
+            })
+        })
 
-        const ref = firebase
-        .storage()
-        .ref()
-        .child("images" + "/" + metadata + "/" + uri);
-        await ref.put(bytes)
-        blob.close();
+        // ref.put(bytes).then(() => {
+        //     alert("Image uploaded successfully to Firebase.");
+        //     getFileBlob(uri, blob =>{
+        //         console.debug(blob);
+        //         storageRef.child('file.jpg').put(blob).then(function(snapshot) {
+        //             console.log('Uploaded a blob or file!');
+        //         })
+        //     })})
+        // //    let uploadImage = fileRef.putFile(uri);
+        // // Firebase API should change while you're working with Firebase V9
+        // const img = await fetch(uri);
+        // const bytes = await img.blob();
+        // console.debug("1");
+        // const ref = storageRef.child("images" + "/" + metadata + "/" + uri);
+        // console.debug("2");
+        // ref.put(bytes).then((snapshot) => {
+        //     console.debug('Uploaded a blob or file!');
+        // });
 
 
         setAttachment(null);

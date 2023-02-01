@@ -3,14 +3,8 @@ import { View, Text, Button, StyleSheet, TextInput } from "react-native";
 import log from "../../loggerConfig";
 import {db} from "../../firebase-config";
 import {useDispatch, useSelector} from "react-redux";
-<<<<<<< HEAD
-import firebase from "firebase";
-import {updateUserData} from "../actions/users";
-
-=======
 import {updateUserAddressBook} from "../actions/users";
 import firebase from "firebase/app";
->>>>>>> 639a46a436d0282aeb590fc6a2ffa415bf59f1d9
 const AddressBook = ({navigation}) => {
 
     const [addVisibility, setAddVisibility] = useState(false);
