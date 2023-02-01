@@ -1,12 +1,16 @@
 import React, {useState} from "react";
 import { View, Text, Button, StyleSheet, TextInput } from "react-native";
-import {addDoc, collection} from "firebase/firestore";
 import log from "../../loggerConfig";
 import {db} from "../../firebase-config";
 import {useDispatch, useSelector} from "react-redux";
+<<<<<<< HEAD
 import firebase from "firebase";
 import {updateUserData} from "../actions/users";
 
+=======
+import {updateUserAddressBook} from "../actions/users";
+import firebase from "firebase/app";
+>>>>>>> 639a46a436d0282aeb590fc6a2ffa415bf59f1d9
 const AddressBook = ({navigation}) => {
 
     const [addVisibility, setAddVisibility] = useState(false);
@@ -22,7 +26,7 @@ const AddressBook = ({navigation}) => {
     const [birthday, setBirthday] = useState("");
     const [notes, setNotes] = useState("");
     const dispatch = useDispatch();
-    const user = useSelector(state => state.user._z.user)
+    const user = useSelector(state => state.user.user)
     const handleAddContact = async () => {
         try{
             const addressBookDoc = {
@@ -35,18 +39,22 @@ const AddressBook = ({navigation}) => {
                 address : address,
                 street : street,
                 zip: zip,
-                birthday : birthday != "" ? firebase.firestore.Timestamp.fromDate(new Date(birthday)) : null,
+                birthday : firebase.firestore.Timestamp.now(),
                 notes : notes,
                 uid: user.uid
             };
-            const docRef = await addDoc(collection(db, 'address_book'), addressBookDoc);
-            log.debug(docRef.id);
-            let addressBook = [];
-            addressBook.push(docRef.id);
-            dispatch(updateUserData({addressBook: addressBook, uid : user.uid}));
+            log.debug(addressBookDoc.uid);
+            await db.collection("address_book").add(addressBookDoc).then((docRef) => {
+                log.info("address_book created");
+                let addressBook = user.addressBook;
+                addressBook.push(docRef.id);
+                dispatch(updateUserAddressBook({addressBook: addressBook, uid : user.uid}));
+            })
+                .catch((error) => log.error("error while creating address_book ", error));
+
         }
         catch(error){
-            log.error("Error in creating addressBook : {}", error);
+            log.error("Error in creating addressBook : ", error);
         }
     }
 

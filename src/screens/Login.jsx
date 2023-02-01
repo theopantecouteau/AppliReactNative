@@ -1,7 +1,6 @@
 import { View, Text, Button, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 import { TextInput } from 'react-native-paper';
-import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../../firebase-config';
 import { useDispatch } from 'react-redux';
 import { setConnexionState} from '../actions/connexion';
@@ -16,7 +15,7 @@ function Login({navigation, props}) {
     const [pwd, setPwd] = useState("");
 
     const handleSignIn = async () => {
-        signInWithEmailAndPassword(auth, id, pwd)
+        auth.signInWithEmailAndPassword(id, pwd)
         .then((userCredential) => {
             log.debug("User login successful");
             Toast.show('Connecté', {duration: Toast.durations.SHORT, animation : true, backgroundColor : "green", position: Toast.positions.TOP});
