@@ -23,7 +23,7 @@ const usersReducer = (state = initialState, action) => {
 
         case FETCH_USER_DATA:
             return {
-                user : {firstname: action.payload.data.firstname, lastname: action.payload.data.lastname, todoList: action.payload.todoList, addressBook: action.payload.addressBook, uid: action.payload.data.uid}
+                user : {firstname: action.payload.data.firstname, lastname: action.payload.data.lastname, todoList: action.payload.todoList, addressBook: action.payload.addressBook, uid: action.payload.uid}
 
             }
 
