@@ -9,6 +9,7 @@ import ShoppingList from "./src/screens/ShoppingList";
 import Login from "./src/screens/Login";
 import Register from "./src/screens/Register";
 import Dashboard from "./src/screens/Dashboard";
+import AddressBookDetail from "./src/screens/AddressBookDetail";
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +44,10 @@ export default function App() {
             <Stack.Screen
               name="Dashboard"
               component={Dashboard}
+            />
+            <Stack.Screen
+              name="AddressBookDetail"
+              component={AddressBookDetail}
             />
           </Stack.Navigator>
         </NavigationContainer>
