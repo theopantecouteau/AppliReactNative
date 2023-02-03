@@ -1,12 +1,14 @@
-import { StatusBar } from 'expo-status-bar';
-import { Button,StyleSheet, Text, View, TextInput, Image } from 'react-native';
+import { Button,StyleSheet, Text, ScrollView, TextInput, Image} from 'react-native';
 import React, { Component, useState, useEffect } from "react";
 import {useDispatch, useSelector} from 'react-redux';
 import Tache from '../components/Tache.jsx'
-import { addTodo, deleteTodo, toggleCheckboxes } from '../actions/toDo';
+import { addTodo, duplicateTodo, toggleCheckboxes } from '../actions/toDo';
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import * as ImagePicker from 'expo-image-picker/src/ImagePicker';
 import { storage } from '../../firebase-config';
+import { ETIQUETTE } from '../constants';
+import { Picker } from '@react-native-picker/picker';
+
 const TodoList = ({ navigation })  => {
 
     const dispatch = useDispatch();
@@ -19,6 +21,7 @@ const TodoList = ({ navigation })  => {
     const [_url, setUrl] = useState("");
     const [_listToDo, setListToDo] = useState([]);
     const [_attachment, setAttachment] = useState("/.jpg");
+    const [_numberEtiquette, setNumberEtiquette] = useState(3);
     
     useEffect(()=> {  
         console.debug("Taille de la ToDoListe : " + state_ToDoList.length);
@@ -35,7 +38,9 @@ const TodoList = ({ navigation })  => {
                             desc : tache.desc,
                             date : tache.date,
                             url : tache.url,
-                            checkbox : false
+                            checkbox : tache.checkbox,
+                            attachment: tache.attachment,
+                            etiquette: tache.etiquette
                         }}
                     />
                 )
@@ -48,7 +53,6 @@ const TodoList = ({ navigation })  => {
         dispatch(addTodo(donnee));
     }   
 
-    
     const pickImage = async () => {
         const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync(); 
 
@@ -130,33 +134,46 @@ const TodoList = ({ navigation })  => {
         setAttachment(null);
     };
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             {!_isCreate && (
-    
-                    <Button
-                        onPress={()=> setIsCreate(true)}
-                        title="Créer une nouvelle Tâche"
-                        color="#841584" 
-                    />
-    
+                <Button
+                    onPress={()=> setIsCreate(true)}
+                    title="Créer une nouvelle Tâche"
+                    color="#841584" 
+                />
             )}
             {!_isCreate && _listToDo.length > 0 && (
                 _listToDo.map(task => (
-                    <View key={task.id}>
-                        <Text>{task.name}</Text>
+                    <ScrollView key={task.props.props.id}>
+                        <Text>{task.props.props.nom}</Text>
+                        <Text>Priorité : {ETIQUETTE[task.props.props.etiquette]}</Text>
                         <Button
-                        title='Check'
-                        onPress={() => toggleCheckboxes(task.id)}
+                            title={task.props.props.checkbox ? 'Check ✔️' : 'Check ❌'}
+                            onPress={() => {
+                                dispatch(toggleCheckboxes(task.props.props.id))}
+                            }
                         />
-
-                        <Button title="Modifier" onPress={() => console.log('Modification de la tâche non implémentée')} />
-                        <Button title="Dupliquer" onPress={() => console.log('Duplication de la tâche non implémentée')} />
-                        <Button title="Supprimer" onPress={() => deleteTodo(task)} />
+                        <Button title="Dupliquer" onPress={() => {
+                                dispatch(duplicateTodo(task.props.props.id))
+                            }} 
+                        />
                         <Button
                         title="Détails"
-                        onPress={() => navigation.navigate('Tache', { task })}
+                        onPress={() => 
+                            navigation.navigate('Tache', {
+                                id : task.props.props.id,
+                                nom : task.props.props.nom, 
+                                etiquette: task.props.props.etiquette,
+                                listeMembre :  task.props.props.listeMembre,
+                                desc : task.props.props.desc,
+                                date : task.props.props.date,
+                                url : task.props.props.url,
+                                checkbox : task.props.props.checkbox,
+                                attachment: task.props.props.attachment,
+                            })
+                        }
                         />
-                    </View>
+                    </ScrollView>
                     )
                 )
             )}
@@ -173,6 +190,15 @@ const TodoList = ({ navigation })  => {
                         value={_nameTache}
                         placeholder="Nom de la Tâche"
                     />
+                    <Picker
+                        selectedValue={_numberEtiquette}
+                        onValueChange={index => setNumberEtiquette(index)}
+                    >
+                        {ETIQUETTE.map((item, index) => (
+                            <Picker.Item key={index} label={item} value={index} />
+                        ))}
+                    </Picker>
+                    <Text>Priorité : {ETIQUETTE[_numberEtiquette]}</Text>
                     <TextInput
                         style={styles.inputDesc}
                         onChangeText={setDesc}
@@ -207,7 +233,8 @@ const TodoList = ({ navigation })  => {
                                 date : _date,
                                 url : _url,
                                 attachment : _attachment,
-                                checkbox: false
+                                checkbox: false,
+                                etiquette : _numberEtiquette
                             };
                             console.info(newTache);
                             addtoToDoList(newTache);
@@ -223,13 +250,14 @@ const TodoList = ({ navigation })  => {
 
                 </>
             )}
-        </View>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
   container: {
     marginTop : '5%',
+    marginBottom: 40,
   },
   test: {
       color: 'red',

@@ -1,16 +1,17 @@
-import { GET_TASK, ADD_TASK, UPDATE_TASK, DELETE_TASK, DUPLICATE_TASK, TOGGLE_CHECKBOXES } from '../constants';
+ import { GET_TASK, ADD_TASK, UPDATE_TASK, DELETE_TASK, DUPLICATE_TASK, TOGGLE_CHECKBOXES } from '../constants';
 
 const initialState = {
     tache : [
         {
-            nom : "Nom", 
+            nom : "Premiere tache", 
             id: "0",  
             listeMembre : [{key : "Hugo"}, {key : "Théo"}], 
             desc : "Description", 
             date : "December 19, 2022", 
             url : "www", 
             attachment: ".jpg",
-            checkbox : false
+            checkbox : false,
+            etiquette : 3
         }
     ]
 }
@@ -44,24 +45,25 @@ const todoReducer = (state = initialState, action) => {
                 tache: newArray, //reassingning todos to new array
             };
         case DUPLICATE_TASK: 
-            const task = state.tasks.find(t => t.id === action.payload.id);
+            console.debug("DANS LE REDUCER : DUPLICATE");
+            const task = state.tache.find(t => t.id === action.payload);
             if (!task) {
                 return state;
             }
             const newTask = {
                 ...task,
-                id: uuid(), // générez un nouvel ID pour la tâche dupliquée
+                id: 4, // générez un nouvel ID pour la tâche dupliquée
             };
             return {
                 ...state,
-                tasks: [...state.tasks, newTask],
+                tache: [...state.tache, newTask],
             };
         
         case TOGGLE_CHECKBOXES: 
             return {
                 ...state,
-                tasks: state.tasks.map(t => {
-                    if (t.id === action.payload.id) {
+                tache: state.tache.map(t => {
+                    if (t.id === action.payload) {
                         return {
                             ...t,
                             checkbox: !t.checkbox,
