@@ -4,7 +4,7 @@ import { TextInput } from 'react-native-paper';
 import { auth } from '../../firebase-config';
 import { useDispatch } from 'react-redux';
 import { setConnexionState} from '../actions/connexion';
-import { getUserData } from '../actions/users';
+import {getAddressBook, getTodoList, getUserData} from '../actions/users';
 import Toast from 'react-native-root-toast';
 import log from '../../loggerConfig.js';
 
