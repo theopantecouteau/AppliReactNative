@@ -15,7 +15,7 @@ const HomeScreen = ({navigation}) => {
                     </Text>
                     <Button
                         title="Go to TodoList"
-                        onPress={() => navigation.navigate('TodoList')}
+                        onPress={() => navigation.navigate('ListTodoList')}
                     />
                     <Button
                         title="Go to ShoppingList"

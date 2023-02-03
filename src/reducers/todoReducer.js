@@ -4,7 +4,7 @@ const initialState = {
     tache : [
         {
             nom : "Premiere tache", 
-            id: "0",  
+            id: 0,  
             listeMembre : [{key : "Hugo"}, {key : "Théo"}], 
             desc : "Description", 
             date : "December 19, 2022", 

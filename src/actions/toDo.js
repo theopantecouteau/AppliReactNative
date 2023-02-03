@@ -1,4 +1,4 @@
-import { GET_TASK, CREATE_TASK, UPDATE_TASK, DELETE_TASK, ADD_TASK, DUPLICATE_TASK, TOGGLE_CHECKBOXES } from '../constants';
+import { GET_TASK, CREATE_TASK, UPDATE_TASK, DELETE_TASK, ADD_TASK, DUPLICATE_TASK, TOGGLE_CHECKBOXES, CREATE_TODOLIST, DELETE_TODOLIST } from '../constants';
 
 export function addTodo(todo) {
     return {
@@ -45,6 +45,20 @@ export function duplicateTodo(todo) {
 export function toggleCheckboxes(todo) {
     return { 
         type: TOGGLE_CHECKBOXES, 
+        payload: todo 
+    }
+}
+
+export function createToDolist(todo){
+    return { 
+        type: CREATE_TODOLIST, 
+        payload: todo 
+    }
+}
+
+export function deleteTodoListe(todo){
+    return { 
+        type: DELETE_TODOLIST, 
         payload: todo 
     }
 }

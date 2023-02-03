@@ -1,19 +1,17 @@
 import { Button,StyleSheet, Text, ScrollView, TextInput, Image} from 'react-native';
 import React, { Component, useState, useEffect } from "react";
 import {useDispatch, useSelector} from 'react-redux';
-import Tache from '../components/Tache.jsx'
 import { addTodo, duplicateTodo, toggleCheckboxes } from '../actions/toDo';
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import * as ImagePicker from 'expo-image-picker/src/ImagePicker';
 import { storage } from '../../firebase-config';
 import { ETIQUETTE } from '../constants';
 import { Picker } from '@react-native-picker/picker';
-
-const TodoList = ({ navigation })  => {
+import {db} from "../../firebase-config";
+import { getTodoList } from "../actions/users";
+const TodoList = ({ navigation, route})  => {
 
     const dispatch = useDispatch();
-    const state_ToDoList = useSelector(state => state.tache.tache);
-    let  cptIdNumber = state_ToDoList.length > 0 ?  Number([state_ToDoList.length -1].id) +1: 0;
     const [_isCreate, setIsCreate] = useState(false);
     const [_nameTache, setNameTache] = useState("");
     const [_desc, setDesc] = useState("");
@@ -22,32 +20,31 @@ const TodoList = ({ navigation })  => {
     const [_listToDo, setListToDo] = useState([]);
     const [_attachment, setAttachment] = useState("/.jpg");
     const [_numberEtiquette, setNumberEtiquette] = useState(3);
-    
+    const user = useSelector(state => state.user.user)
+
     useEffect(()=> {  
-        console.debug("Taille de la ToDoListe : " + state_ToDoList.length);
-        console.debug(state_ToDoList);
+        let listeDesTaches = route.params.listeTache;
         let array = [];
-        for (let idxTache = 0; idxTache < state_ToDoList.length; idxTache++){
-            let tache = state_ToDoList[idxTache];
+        for (let idxTache = 0; idxTache < listeDesTaches.length; idxTache++){
+            let tache = listeDesTaches[idxTache];
             if (tache != undefined){
-                array.push(
-                    <Tache props={{
-                            nom : tache.nom, 
-                            id: tache.id, 
-                            listeMembre : tache.listeMembre,
-                            desc : tache.desc,
-                            date : tache.date,
-                            url : tache.url,
-                            checkbox : tache.checkbox,
-                            attachment: tache.attachment,
-                            etiquette: tache.etiquette
-                        }}
-                    />
-                )
+                array.push({
+                    nom : tache.nom, 
+                    id: tache.id, 
+                    listeMembre : tache.listeMembre,
+                    desc : tache.desc,
+                    date : tache.date,
+                    url : tache.url,
+                    checkbox : tache.checkbox,
+                    attachment: tache.attachment,
+                    etiquette: tache.etiquette,
+                    uid: user.uid
+
+                })
             }   
         }
         setListToDo(array);    
-    },[state_ToDoList])
+    },[user])
     
     const addtoToDoList = (donnee) => {
         dispatch(addTodo(donnee));
@@ -133,8 +130,37 @@ const TodoList = ({ navigation })  => {
 
         setAttachment(null);
     };
+
+    const handleAddTache = async () => {
+        try{
+            const Tache = {
+                nom : _nameTache, 
+                id: 1, 
+                listeMembre : ["Hugo", "Theo"],
+                desc : _desc,
+                date : _date,
+                url : _url,
+                attachment : _attachment,
+                checkbox: false,
+                etiquette : _numberEtiquette,
+                uid: user.uid
+            };
+            console.log(route.params.id)
+            await db.collection("users").doc(user.uid).collection('todo_list').doc("ClSDrI0VciW7at3mGXxP").collection('tache').add(Tache).then((docRef) => {
+                console.info("tache created in user collection");
+                dispatch(getTodoList(user.uid))
+            })
+                .catch((error) => console.error("error while creating tache in user collection ", error));
+
+        }
+        catch(error){
+            console.error("Error in creating Tache : ", error);
+        }
+    }
     return (
         <ScrollView style={styles.container}>
+            <Text>Nom TodoList : {route.params.nom}</Text>
+            <Text>Description TodoList : {route.params.desc}</Text>
             {!_isCreate && (
                 <Button
                     onPress={()=> setIsCreate(true)}
@@ -144,34 +170,34 @@ const TodoList = ({ navigation })  => {
             )}
             {!_isCreate && _listToDo.length > 0 && (
                 _listToDo.map(task => (
-                    <ScrollView key={task.props.props.id}>
-                        <Text>{task.props.props.nom}</Text>
-                        <Text>Priorité : {ETIQUETTE[task.props.props.etiquette]}</Text>
+                    <ScrollView key={task.id}>
+                        <Text>{task.nom}</Text>
+                        <Text>Priorité : {ETIQUETTE[task.etiquette]}</Text>
                         <Button
-                            title={task.props.props.checkbox ? 'Check ✔️' : 'Check ❌'}
+                            title={task.checkbox ? 'Check ✔️' : 'Check ❌'}
                             onPress={() => {
-                                dispatch(toggleCheckboxes(task.props.props.id))}
+                                dispatch(toggleCheckboxes(task.id))}
                             }
                         />
                         <Button title="Dupliquer" onPress={() => {
-                                dispatch(duplicateTodo(task.props.props.id))
+                                dispatch(duplicateTodo(task.props.id))
                             }} 
                         />
                         <Button
-                        title="Détails"
-                        onPress={() => 
-                            navigation.navigate('Tache', {
-                                id : task.props.props.id,
-                                nom : task.props.props.nom, 
-                                etiquette: task.props.props.etiquette,
-                                listeMembre :  task.props.props.listeMembre,
-                                desc : task.props.props.desc,
-                                date : task.props.props.date,
-                                url : task.props.props.url,
-                                checkbox : task.props.props.checkbox,
-                                attachment: task.props.props.attachment,
-                            })
-                        }
+                            title="Détails"
+                            onPress={() => 
+                                navigation.navigate('Tache', {
+                                    id : task.id,
+                                    nom : task.nom, 
+                                    etiquette: task.etiquette,
+                                    listeMembre :  task.listeMembre,
+                                    desc : task.desc,
+                                    date : task.date,
+                                    url : task.url,
+                                    checkbox : task.checkbox,
+                                    attachment: task.attachment,
+                                })
+                            }
                         />
                     </ScrollView>
                     )
@@ -224,27 +250,7 @@ const TodoList = ({ navigation })  => {
                     <Button title="Choisissez une image" onPress={pickImage} />
                     <Image source={{ uri: _attachment }} style={{ width: 200, height: 200 }} />
                     <Button
-                        onPress={() => {
-                            let newTache = {
-                                nom : _nameTache, 
-                                id: Number(cptIdNumber), 
-                                listeMembre : ["Hugo", "Theo"],
-                                desc : _desc,
-                                date : _date,
-                                url : _url,
-                                attachment : _attachment,
-                                checkbox: false,
-                                etiquette : _numberEtiquette
-                            };
-                            console.info(newTache);
-                            addtoToDoList(newTache);
-                            setIsCreate(false);
-                            setNameTache("");
-                            setUrl("");
-                            setDate(new Date());
-                            setDesc("");
-                            setAttachment("");
-                        } }
+                        onPress={handleAddTache}
                         title="Ajouter la tache" 
                     />
 

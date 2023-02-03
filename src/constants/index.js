@@ -17,3 +17,5 @@ export const ADD_USER_TODO_LIST = 'ADD_USER_TODO_LIST';
 
 // ToDolist
 export const ETIQUETTE = ['🔴', '🟠', '🟡', '🟢'];
+export const CREATE_TODOLIST = 'CREATE_TODOLIST'
+export const DELETE_TODOLIST = 'DELETE_TODOLIST'
