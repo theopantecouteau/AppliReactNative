@@ -1,10 +1,10 @@
 import React, {useState} from "react";
-import { View, Text, Button, StyleSheet, TextInput } from "react-native";
+import { View, Text, Button, StyleSheet, TextInput, FlatList } from "react-native";
 import log from "../../loggerConfig";
 import {db} from "../../firebase-config";
 import {useDispatch, useSelector} from "react-redux";
-import {updateUserAddressBook} from "../actions/users";
 import firebase from "firebase/app";
+import {getAddressBook} from "../actions/users";
 const AddressBook = ({navigation}) => {
 
     const [addVisibility, setAddVisibility] = useState(false);
@@ -21,6 +21,7 @@ const AddressBook = ({navigation}) => {
     const [notes, setNotes] = useState("");
     const dispatch = useDispatch();
     const user = useSelector(state => state.user.user)
+    log.info(user);
     const handleAddContact = async () => {
         try{
             const addressBookDoc = {
@@ -38,13 +39,11 @@ const AddressBook = ({navigation}) => {
                 uid: user.uid
             };
             log.debug(addressBookDoc.uid);
-            await db.collection("address_book").add(addressBookDoc).then((docRef) => {
-                log.info("address_book created");
-                let addressBook = user.addressBook;
-                addressBook.push(docRef.id);
-                dispatch(updateUserAddressBook({addressBook: addressBook, uid : user.uid}));
+            await db.collection("users").doc(user.uid).collection('address_book').add(addressBookDoc).then((docRef) => {
+                log.info("address_book created in user collection");
+                dispatch(getAddressBook(user.uid))
             })
-                .catch((error) => log.error("error while creating address_book ", error));
+                .catch((error) => log.error("error while creating address_book in user collection ", error));
 
         }
         catch(error){
@@ -78,6 +77,18 @@ const AddressBook = ({navigation}) => {
                         <Text>Urgences</Text>
                         <Text>112</Text>
                     </View>
+                    <FlatList
+                        data={user.addressBook}
+                        renderItem={({ item }) => (
+                            <Text  onPress={() => navigation.navigate('AddressBookDetail', {item})}>
+                                <View style={styles.itemContainer}>
+                                    <Text style={styles.nameText}>{item.firstname}</Text>
+                                    <Text style={styles.phoneText}>{item.lastname}</Text>
+                                </View>
+                            </Text>
+                        )}
+                        keyExtractor={(item, index) => index }
+                    />
                 </View>
             :
                 <View>
@@ -140,8 +151,20 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between"
-    }
-
+    },
+    itemContainer: {
+        padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+    },
+    nameText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    phoneText: {
+        fontSize: 16,
+        color: '#555',
+    },
 });
 
 export default AddressBook;
