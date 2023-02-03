@@ -1,12 +1,16 @@
 import { View, Text } from 'react-native'
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import log from "../../loggerConfig"
 
 const Dashboard = ({navigation, route}) => {
-    console.log(route.params.name)
+  const dispatch = useDispatch();
+  const user = useSelector(state => state.user.user)
+    log.info(user)
   return (
     <View>
       <Text>Dashboard</Text>
-      <Text>Bonjour {route.params.name}</Text>
+      <Text>Bonjour {user.firstname}</Text>
     </View>
   )
 }

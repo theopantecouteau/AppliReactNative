@@ -1,53 +1,55 @@
-import { View, Text, Button, StyleSheet, ActionSheetIOS } from 'react-native';
+import { View, Text, Button, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 import { TextInput } from 'react-native-paper';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import {initializeApp} from 'firebase/app';
-import { firebaseConfig } from '../../firebase-config';
-import { useDispatch , useSelector } from 'react-redux';
+import { auth } from '../../firebase-config';
+import { useDispatch } from 'react-redux';
 import { setConnexionState} from '../actions/connexion';
+import {getAddressBook, getTodoList, getUserData} from '../actions/users';
+import Toast from 'react-native-root-toast';
+import log from '../../loggerConfig.js';
 
 function Login({navigation, props}) {
 
     const dispatch = useDispatch();
     const [id, setId] = useState("");
     const [pwd, setPwd] = useState("");
-    const [user, setUser] = useState("user");
-    const isConnected = useSelector(state => state.isConnected)
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
 
-    console.debug(isConnected)
-
-    const handleSignUp = () => {
-        createUserWithEmailAndPassword(auth, id, pwd)
+    const handleSignIn = async () => {
+        auth.signInWithEmailAndPassword(id, pwd)
         .then((userCredential) => {
-            console.debug("User created");
+            log.debug("User login successful");
+            Toast.show('Connecté', {duration: Toast.durations.SHORT, animation : true, backgroundColor : "green", position: Toast.positions.TOP});
             const user = userCredential.user;
-            console.debug(user);
-        })
-        .catch((error) => console.debug(error));
-    }
-
-    const handleSignIn = () => {
-        signInWithEmailAndPassword(auth, id, pwd)
-        .then((userCredential) => {
-            console.debug("User login successful");
-            const user = userCredential.user;
-            console.debug(user);
             dispatch(setConnexionState({isConnected : true}));
+            dispatch(getUserData(user.uid));
+            navigation.navigate('Home');
         })
-        .catch((error) => console.debug(error))
-    }
-
-    const handleLogOut = () => {
-        signOut(auth)
-        .then((userCredential) => {
-            console.debug("User log out successful");
-            const user = userCredential.user;
-            console.debug(user);
-            dispatch(setConnexionState({isConnected : false}));
-        })
+        .catch((error) => {
+            log.error(error)
+            switch(error.code){
+                case "auth/wrong-password":
+                    Toast.show('Mot de passe incorrect', {duration: Toast.durations.SHORT, animation : true, backgroundColor : "orange", position: Toast.positions.TOP});
+                    break;
+                case "auth/user-not-found":
+                    Toast.show('Utilisateur introuvable', {duration: Toast.durations.SHORT, animation : true, backgroundColor : "red", position: Toast.positions.TOP});
+                    break;
+                case "auth/user-disabled":
+                    Toast.show('Compte désactivé', {duration: Toast.durations.SHORT, animation : true, backgroundColor : "red", position: Toast.positions.TOP});
+                    break;
+                case "auth/operation-not-allowed":
+                    Toast.show('Trop de tentatives, veuillez patienter...', {duration: Toast.durations.SHORT, animation : true, backgroundColor : "red", position: Toast.positions.TOP});
+                    break;
+                case "auth/operation-not-allowed":
+                    Toast.show('En maintenance, veuillez patienter ...', {duration: Toast.durations.SHORT, animation : true, backgroundColor : "red", position: Toast.positions.TOP});
+                    break;
+                case "auth/invalid-email":
+                    Toast.show('Email invalide', {duration: Toast.durations.SHORT, animation : true, backgroundColor : "orange", position: Toast.positions.TOP});
+                    break;
+                default:
+                    Toast.show('Impossible de vous connecter', {duration: Toast.durations.SHORT, animation : true, backgroundColor : "red", position: Toast.positions.TOP});
+                    break;
+            }
+        });
     }
 
     return (
@@ -70,16 +72,6 @@ function Login({navigation, props}) {
                     onPress={handleSignIn}
                     title="Login"
                 > 
-                </Button>
-                <Button
-                    onPress={handleSignUp}
-                    title="Register"
-                >  
-                </Button>
-                <Button
-                    onPress={handleLogOut}
-                    title="Logout"
-                >  
                 </Button>
             </View>
         </View>
