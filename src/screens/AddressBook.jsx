@@ -3,8 +3,8 @@ import { View, Text, Button, StyleSheet, TextInput, FlatList } from "react-nativ
 import log from "../../loggerConfig";
 import {db} from "../../firebase-config";
 import {useDispatch, useSelector} from "react-redux";
+import {getUserAddressBook} from "../actions/addressBook";
 import firebase from "firebase/app";
-import {getAddressBook} from "../actions/users";
 const AddressBook = ({navigation}) => {
 
     const [addVisibility, setAddVisibility] = useState(false);
@@ -20,8 +20,9 @@ const AddressBook = ({navigation}) => {
     const [birthday, setBirthday] = useState("");
     const [notes, setNotes] = useState("");
     const dispatch = useDispatch();
+    const addressBook = useSelector(state => state.addressBook.addressBook);
     const user = useSelector(state => state.user.user)
-    log.info(user);
+    log.info(addressBook);
     const handleAddContact = async () => {
         try{
             const addressBookDoc = {
@@ -39,12 +40,11 @@ const AddressBook = ({navigation}) => {
                 uid: user.uid
             };
             log.debug(addressBookDoc.uid);
-            await db.collection("users").doc(user.uid).collection('address_book').add(addressBookDoc).then((docRef) => {
+            await db.collection("address_book").add(addressBookDoc).then((docRef) => {
                 log.info("address_book created in user collection");
-                dispatch(getAddressBook(user.uid))
+                dispatch(getUserAddressBook(user.uid))
             })
                 .catch((error) => log.error("error while creating address_book in user collection ", error));
-
         }
         catch(error){
             log.error("Error in creating addressBook : ", error);
@@ -78,7 +78,7 @@ const AddressBook = ({navigation}) => {
                         <Text>112</Text>
                     </View>
                     <FlatList
-                        data={user.addressBook}
+                        data={addressBook}
                         renderItem={({ item }) => (
                             <Text  onPress={() => navigation.navigate('AddressBookDetail', {item})}>
                                 <View style={styles.itemContainer}>
