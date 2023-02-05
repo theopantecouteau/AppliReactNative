@@ -14,7 +14,6 @@ const usersReducer = (state = initialState, action) => {
         case FETCH_USER_DATA:
             return {
                 user : {firstname: action.payload.data.firstname, lastname: action.payload.data.lastname, uid: action.payload.uid}
-
             }
         default:
             return state;
