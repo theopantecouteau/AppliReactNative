@@ -7,6 +7,8 @@ import { setConnexionState} from '../actions/connexion';
 import {getAddressBook, getTodoList, getUserData} from '../actions/users';
 import Toast from 'react-native-root-toast';
 import log from '../../loggerConfig.js';
+import {getUserAddressBook} from "../actions/addressBook";
+import {getUserTodoList} from "../actions/todoList";
 
 function Login({navigation, props}) {
 
@@ -22,6 +24,8 @@ function Login({navigation, props}) {
             const user = userCredential.user;
             dispatch(setConnexionState({isConnected : true}));
             dispatch(getUserData(user.uid));
+            dispatch(getUserAddressBook(user.uid));
+            dispatch(getUserTodoList(user.uid));
             navigation.navigate('Home');
         })
         .catch((error) => {

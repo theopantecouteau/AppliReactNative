@@ -9,11 +9,21 @@ export function getUserTodoList(userUid){
             const docRef =  db.collection("todo_list").where("uid", "==", userUid);
             docRef.get().then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
-                    todo_list.push(doc.data());
+                    let data = doc.data();
+                    data.id = doc.id;
+                    let taches = []
+                    const docRef2 = db.collection("todo_list").doc(doc.id).collection("taches");
+                    docRef2.get().then((querySnapshot2) => {
+                        querySnapshot2.forEach((doc) => {
+                            taches.push(doc.data());
+                        })
+                    })
+                    data.taches = taches;
+                    todo_list.push(data);
                 });
                 dispatch({
                     type: FETCH_USER_TODO_LIST,
-                    payload: {data: todo_list, uid: userUid}
+                    payload: {data: todo_list }
                 });
             });
         }

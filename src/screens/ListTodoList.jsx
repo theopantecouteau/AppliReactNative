@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Button, Text, TextInput, StyleSheet, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux"
-import { getTodoList } from "../actions/users";
 import {db} from "../../firebase-config";
-
+import {getUserTodoList} from "../actions/todoList";
+import log from "../../loggerConfig";
 const ListToDoList = ({navigation }) => {
 
     const dispatch = useDispatch();
@@ -12,20 +12,22 @@ const ListToDoList = ({navigation }) => {
     const [_desc, setDesc] = useState("");
     
     const [_listeTodoList, setListTodoList] = useState([]);
-    const user = useSelector(state => state.user.user)
-
+    const todolist = useSelector(state => state.todoList.todoList);
+    const user = useSelector(state => state.user.user);
+    log.info(todolist);
     useEffect(()=> {  
-        let listeTodo = user.todoList;
+        let listeTodo = todolist;
         let array = [];
         for (let idxTache = 0; idxTache < listeTodo.length; idxTache++){
             let todoList = listeTodo[idxTache];
             if (todoList != undefined){
                 array.push({
                     nom : todoList.nom, 
-                    id: todoList.id, 
+                    id: todoList.id,
                     desc : todoList.desc,
-                    listeTache : todoList.listeTache,
-                    uid: user.uid
+                    taches : todoList.taches,
+                    uid: user.uid,
+
                 })
             }   
         }
@@ -38,15 +40,12 @@ const ListToDoList = ({navigation }) => {
                     nom : _nameTodo, 
                     id: 1, 
                     desc : _desc,
-                    listeTache : [],
+                    taches : [],
                     uid: user.uid
             };
-            console.log('ahhhhhhhhhh')
-            console.log(user)
-            console.log(TodoList.uid);
-            await db.collection("users").doc(user.uid).collection('todo_list').add(TodoList).then((docRef) => {
+            await db.collection("todo_list").add(TodoList).then((docRef) => {
                 console.info("Todo_List created in user collection");
-                dispatch(getTodoList(user.uid));
+                dispatch(getUserTodoList(user.uid));
                 setIsCreate(false);
                 setDesc("");
                 setNameTodo("");
@@ -79,9 +78,9 @@ const ListToDoList = ({navigation }) => {
                             onPress={() => 
                                 navigation.navigate('TodoList', {
                                     id : todo.id,
-                                    nom : todo.nom, 
+                                    nom : todo.nom,
                                     desc : todo.desc,
-                                    listeTache : todo.listeTache
+                                    taches : todo.taches
                                 })
                             }
                         />

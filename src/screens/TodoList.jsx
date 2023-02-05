@@ -9,6 +9,7 @@ import { ETIQUETTE } from '../constants';
 import { Picker } from '@react-native-picker/picker';
 import {db} from "../../firebase-config";
 import { getTodoList } from "../actions/users";
+import {getUserTodoList} from "../actions/todoList";
 const TodoList = ({ navigation, route})  => {
 
     const dispatch = useDispatch();
@@ -22,8 +23,10 @@ const TodoList = ({ navigation, route})  => {
     const [_numberEtiquette, setNumberEtiquette] = useState(3);
     const user = useSelector(state => state.user.user)
 
-    useEffect(()=> {  
-        let listeDesTaches = route.params.listeTache;
+    useEffect(()=> {
+        console.log(route.params)
+        let listeDesTaches = route.params.taches;
+        console.log(listeDesTaches);
         let array = [];
         for (let idxTache = 0; idxTache < listeDesTaches.length; idxTache++){
             let tache = listeDesTaches[idxTache];
@@ -46,9 +49,9 @@ const TodoList = ({ navigation, route})  => {
         setListToDo(array);    
     },[user])
     
-    const addtoToDoList = (donnee) => {
+    /*const addtoToDoList = (donnee) => {
         dispatch(addTodo(donnee));
-    }   
+    }   */
 
     const pickImage = async () => {
         const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync(); 
@@ -142,13 +145,12 @@ const TodoList = ({ navigation, route})  => {
                 url : _url,
                 attachment : _attachment,
                 checkbox: false,
-                etiquette : _numberEtiquette,
-                uid: user.uid
+                etiquette : _numberEtiquette
             };
-            console.log(route.params.id)
-            await db.collection("users").doc(user.uid).collection('todo_list').doc("ClSDrI0VciW7at3mGXxP").collection('tache').add(Tache).then((docRef) => {
+            console.debug(route.params)
+            await db.collection("todo_list").doc(route.params.id).collection('taches').add(Tache).then((docRef) => {
                 console.info("tache created in user collection");
-                dispatch(getTodoList(user.uid))
+                dispatch(getUserTodoList(user.uid))
             })
                 .catch((error) => console.error("error while creating tache in user collection ", error));
 
