@@ -45,8 +45,6 @@ export default function Register({navigation, props}) {
             const userDoc = {
                 firstname : firstname,
                 lastname : lastname,
-                todoList : [],
-                addressBook : []
             };
             await db.collection("users").doc(userUid).set(userDoc).then((res) => log.info("user created"))
                                                                  .catch((error) => log.error("error while creating user ", error));

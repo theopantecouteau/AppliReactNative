@@ -1,16 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button ,StyleSheet, Text, TextInput, View, FlatList,Image } from 'react-native';
+import { Button ,StyleSheet, Text, TextInput, ScrollView, Image } from 'react-native';
 import React, { Component, useState, useEffect } from "react";
 import {deleteTodo, updateTodo } from '../actions/toDo';
 import {connect, useDispatch, useSelector} from 'react-redux';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
+import { ETIQUETTE } from '../constants';
+import { Picker } from '@react-native-picker/picker';
 
-const stateTache = [
-    "ToDo",
-    "Pending",
-    "Done"
-];
 const Tache = ({navigation, route}) => {
     const [_isModif, setIsModif] = useState(false);
     const [_currentState, setCurrentState] = useState(0);
@@ -20,6 +17,7 @@ const Tache = ({navigation, route}) => {
     const [_date, setDate] = useState(new Date(route.params.date));
     const [_url, setUrl] = useState(route.params.url);
     const [_attachment, setAttachment] = useState(route.params.attachment);
+    const [_numberEtiquette, setNumberEtiquette] = useState(3);
     const dispatch = useDispatch();
     
     useEffect(() => { 
@@ -67,7 +65,9 @@ const Tache = ({navigation, route}) => {
             desc : _desc,
             date : _date,
             url : _url,
-            attachment : _attachment
+            checkbox : route.params.checkbox,
+            attachment : _attachment,
+            etiquette : _numberEtiquette
         }
         console.debug("DANS LA FONCTION");
         console.debug(newObject);
@@ -76,13 +76,22 @@ const Tache = ({navigation, route}) => {
     }
     
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <TextInput
                 style={styles.input}
                 onChangeText={setNameTache}
                 value={_nameTache}
                 placeholder="Nom de la Tâche"
             />
+            <Picker
+                selectedValue={_numberEtiquette}
+                onValueChange={index => setNumberEtiquette(index)}
+            >
+                {ETIQUETTE.map((item, index) => (
+                    <Picker.Item key={index} label={item} value={index} />
+                ))}
+            </Picker>
+            <Text>Priorité : {ETIQUETTE[_numberEtiquette]}</Text>
             <TextInput
                 style={styles.inputDesc}
                 onChangeText={setDesc}
@@ -116,13 +125,14 @@ const Tache = ({navigation, route}) => {
                 onPress={() => saveModif()} 
                 title="Enregistrer"
             />      
-        </View>
+        </ScrollView>
     );
 }
 export default Tache;
 const styles = StyleSheet.create({
     container: {
       marginTop : '5%',
+      marginBottom: 40,
     },
     input: {
       height: 40,
