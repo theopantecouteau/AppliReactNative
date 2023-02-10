@@ -26,9 +26,9 @@ Restes des fonctionnalités à offrir :
             -> Possibilité de masquer les checkboxs
     - Tache
         -> Nom ✔️
-        -> Avatar / Icone
+        -> Avatar / Icone 
         -> Droits d'accès 
         -> Notes ✔️
         -> Url ✔️
-        -> Pièce jointe
+        -> Pièce jointe (remplacer par image)
         -> Echéance Rappel (Date)
